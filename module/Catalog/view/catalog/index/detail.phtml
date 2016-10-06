@@ -1,0 +1,8 @@
+<h1>Category Details</h1>
+
+<dl>
+    <dt>Post Title</dt>
+    <dd><?php echo $this->escapeHtml($this->category->getName());?></dd>
+    <dt>Post Text</dt>
+    <dd><?php echo $this->escapeHtml($this->category->getFullPath());?></dd>
+</dl>

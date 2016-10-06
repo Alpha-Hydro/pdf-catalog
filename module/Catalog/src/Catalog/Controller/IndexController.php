@@ -31,4 +31,13 @@ class IndexController extends AbstractActionController
             'categories' => $this->categoryService->fetchAll()
         ]);
     }
+
+    public function detailAction()
+    {
+        $id = $this->params()->fromRoute('id');
+
+        return new ViewModel([
+            'category' => $this->categoryService->find($id)
+        ]);
+    }
 }

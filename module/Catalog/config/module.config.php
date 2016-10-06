@@ -10,20 +10,29 @@ return array(
         )
     ),
     'router' => array(
-        // Open configuration for all possible routes
         'routes' => array(
-            // Define a new route called "post"
             'catalog' => array(
-                // Define the routes type to be "Zend\Mvc\Router\Http\Literal", which is basically just a string
                 'type' => 'literal',
-                // Configure the route itself
                 'options' => array(
-                    // Listen to "/blog" as uri
                     'route'    => '/catalog',
-                    // Define default controller and action to be called when this route is matched
                     'defaults' => array(
                         'controller' => 'Catalog\Controller\Index',
                         'action'     => 'index',
+                    )
+                ),
+                'may_terminate' => true,
+                'child_routes'  => array(
+                    'detail' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route'    => '/:id',
+                            'defaults' => array(
+                                'action' => 'detail'
+                            ),
+                            'constraints' => array(
+                                'id' => '[1-9]\d*'
+                            )
+                        )
                     )
                 )
             )

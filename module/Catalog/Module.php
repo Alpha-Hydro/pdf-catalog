@@ -1,8 +1,13 @@
 <?php
 namespace Catalog;
 
-use Catalog\Service\CategoryService;
+use Catalog\Factory\CategoryServiceFactory;
+use Catalog\Factory\ZendDbSqlMapperFactory;
+use Catalog\Mapper\CategoryMapperInterface;
 use Catalog\Service\CategoryServiceInterface;
+
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\Adapter\AdapterServiceFactory;
 
 class Module
 {
@@ -27,10 +32,12 @@ class Module
         return [
             'abstract_factories' => [],
             'aliases' => [],
-            'factories' => [],
-            'invokables' => [
-                CategoryServiceInterface::class => CategoryService::class,
+            'factories' => [
+                CategoryMapperInterface::class => ZendDbSqlMapperFactory::class,
+                CategoryServiceInterface::class => CategoryServiceFactory::class,
+                Adapter::class => AdapterServiceFactory::class,
             ],
+            'invokables' => [],
             'services' => [],
             'shared' => [],
         ];
