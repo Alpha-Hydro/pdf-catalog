@@ -1,0 +1,10 @@
+<h1>Каталог</h1>
+
+<?php foreach ($categories as $category): ?>
+    <article>
+        <h3 id="category<?= $category->getId() ?>"><?= $category->getName() ?></h3>
+        <p>
+            <a href="http://alpha-hydro.loc/catalog/<?= $category->getFullPAth() ?>" target="_blank"><?= $category->getFullPAth() ?></a>
+        </p>
+    </article>
+<?php endforeach ?>
