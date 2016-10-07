@@ -10,6 +10,7 @@
 namespace Catalog\Service;
 
 use Catalog\Mapper\CategoryMapperInterface;
+use Catalog\Model\Category;
 
 class CategoryService implements CategoryServiceInterface
 {
@@ -31,5 +32,27 @@ class CategoryService implements CategoryServiceInterface
     public function find($id)
     {
         return $this->categoryMapper->find($id);
+    }
+
+    public function findTreeByParentId($id)
+    {
+        $resultSet = $this->categoryMapper->fetchAll();
+
+        return $resultSet->toArray();
+    }
+
+    public function findCategoriesByParentId($id)
+    {
+        $resultSet = $this->categoryMapper->fetchAll();
+
+        $subCategories = array();
+
+        foreach($resultSet as $category){
+            if($category->getParentId() === $id){
+                $subCategories[] = $category;
+            }
+        }
+
+        return $subCategories;
     }
 }

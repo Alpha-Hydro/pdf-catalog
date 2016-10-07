@@ -22,15 +22,27 @@ return array(
                 ),
                 'may_terminate' => true,
                 'child_routes'  => array(
-                    'detail' => array(
+                    'list' => array(
                         'type' => 'segment',
                         'options' => array(
                             'route'    => '/:id',
                             'defaults' => array(
-                                'action' => 'detail'
+                                'action' => 'list'
                             ),
                             'constraints' => array(
-                                'id' => '[1-9]\d*'
+                                'id' => '[0-9]\d*'
+                            )
+                        )
+                    ),
+                    'tree' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route'    => '/tree/:id',
+                            'defaults' => array(
+                                'action' => 'tree'
+                            ),
+                            'constraints' => array(
+                                'id' => '[0-9]\d*'
                             )
                         )
                     )

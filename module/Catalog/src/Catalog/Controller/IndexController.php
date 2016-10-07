@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by Alpha-Hydro.
- * @link http://www.alpha-hydro.com
- * @author Vladimir Mikhaylov <admin@alpha-hydro.com>
- * @copyright Copyright (c) 2016, Alpha-Hydro
- *
- */
 
 namespace Catalog\Controller;
 
@@ -15,20 +8,22 @@ use Zend\View\Model\ViewModel;
 
 class IndexController extends AbstractActionController
 {
+
     /**
      * @var CategoryServiceInterface
      */
-    protected $categoryService;
+    protected $categoryService = null;
 
-    public function __construct(CategoryServiceInterface $categoryService)
+    public function __construct(\Catalog\Service\CategoryServiceInterface $categoryService)
     {
         $this->categoryService = $categoryService;
     }
 
     public function indexAction()
     {
+        $id = '0';
         return new ViewModel([
-            'categories' => $this->categoryService->fetchAll()
+            'categories' => $this->categoryService->findCategoriesByParentId($id)
         ]);
     }
 
@@ -40,4 +35,25 @@ class IndexController extends AbstractActionController
             'category' => $this->categoryService->find($id)
         ]);
     }
+
+    public function listAction()
+    {
+        $id = $this->params()->fromRoute('id');
+
+        return new ViewModel([
+            'category' => ($id != 0)?$this->categoryService->find($id):null,
+            'subCategories' => $this->categoryService->findCategoriesByParentId($id)
+        ]);
+    }
+
+    public function treeAction()
+    {
+        $id = $this->params()->fromRoute('id');
+
+        \Zend\Debug\Debug::dump($this->categoryService->findTreeByParentId($id));
+        return new ViewModel();
+    }
+
+
 }
+

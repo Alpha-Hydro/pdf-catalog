@@ -54,15 +54,21 @@ class ZendDbSqlMapper implements CategoryMapperInterface
     {
         $sql = new Sql($this->dbAdapter);
         $select = $sql->select('categories');
-        $select->where(array('parent_id = ?' => 0));
+        $select
+            ->where([
+                'deleted != ?' => 1,
+                'active != ?' => 0,
+            ])
+            ->order('sorting ASC');
 
         $stmt   = $sql->prepareStatementForSqlObject($select);
         $result = $stmt->execute();
 
         if ($result instanceof ResultInterface && $result->isQueryResult()) {
             $resultSet = new HydratingResultSet($this->hydrator, $this->categoryPrototype);
+            $resultSet->initialize($result);
 
-            return $resultSet->initialize($result);
+            return $resultSet;
         }
 
         return array();

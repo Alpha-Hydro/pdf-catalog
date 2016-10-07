@@ -1,10 +1,11 @@
-<h1>Каталог</h1>
+<h1><?=($this->category)?$this->escapeHtml($this->category->getName()):'Каталог';?></h1>
 
-<?php foreach ($categories as $category): ?>
+<?php foreach ($this->subCategories as $category): ?>
     <article>
         <h3 id="category<?= $category->getId() ?>"><?= $category->getName() ?></h3>
         <p>
             <a href="/catalog/<?= $category->getId() ?>"><?= $category->getFullPath() ?></a>
+            (<?= $category->getSubCategories() ?>)
         </p>
     </article>
 <?php endforeach ?>

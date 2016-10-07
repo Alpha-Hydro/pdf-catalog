@@ -37,13 +37,10 @@ interface CategoryInterface
      */
     public function getFullPath();
 
-    /**
-     * @return int
-     */
-    public function getSorting();
 
     /**
-     * @return int
+     * @return mixed
      */
-    public function getDeleted();
+    public function getSubCategories();
+
 }

@@ -24,4 +24,16 @@ interface CategoryServiceInterface
      * @return CategoryInterface
      */
     public function find($id);
+
+    /**
+     * @param $parentId
+     * @return array|CategoryInterface[]
+     */
+    public function findTreeByParentId($parentId);
+
+    /**
+     * @param $parentId
+     * @return array|CategoryInterface[]
+     */
+    public function findCategoriesByParentId($parentId);
 }

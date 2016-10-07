@@ -37,15 +37,8 @@ class Category implements CategoryInterface
      */
     protected $fullPath;
 
-    /**
-     * @var int
-     */
-    protected $sorting;
 
-    /**
-     * @var int
-     */
-    protected $deleted;
+    protected $subCategories = null;
 
     /**
      * @return int
@@ -127,36 +120,21 @@ class Category implements CategoryInterface
         $this->fullPath = $fullPath;
     }
 
+
     /**
-     * @return int
+     * @return null
      */
-    public function getSorting()
+    public function getSubCategories()
     {
-        return $this->sorting;
+        return $this->subCategories;
     }
 
     /**
-     * @param int $sorting
+     * @param null $subCategories
      */
-    public function setSorting($sorting)
+    public function setSubCategories($subCategories)
     {
-        $this->sorting = $sorting;
-    }
-
-    /**
-     * @return int
-     */
-    public function getDeleted()
-    {
-        return $this->deleted;
-    }
-
-    /**
-     * @param int $deleted
-     */
-    public function setDeleted($deleted)
-    {
-        $this->deleted = $deleted;
+        $this->subCategories = $subCategories;
     }
 
 
