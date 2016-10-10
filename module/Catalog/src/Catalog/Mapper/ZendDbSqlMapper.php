@@ -9,7 +9,6 @@
 
 namespace Catalog\Mapper;
 
-use Catalog\Model\Category;
 use Catalog\Model\CategoryInterface;
 
 use Zend\Db\Adapter\AdapterInterface;

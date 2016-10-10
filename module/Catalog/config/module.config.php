@@ -37,7 +37,7 @@ return array(
                     'tree' => array(
                         'type' => 'segment',
                         'options' => array(
-                            'route'    => '/tree/:id',
+                            'route'    => '/tree[/:id]',
                             'defaults' => array(
                                 'action' => 'tree'
                             ),
@@ -45,7 +45,28 @@ return array(
                                 'id' => '[0-9]\d*'
                             )
                         )
-                    )
+                    ),
+                    'detail' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route'    => '/detail/:id',
+                            'defaults' => array(
+                                'action' => 'detail'
+                            ),
+                            'constraints' => array(
+                                'id' => '[0-9]\d*'
+                            )
+                        )
+                    ),
+                    'pdf' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route'    => '/pdf',
+                            'defaults' => array(
+                                'action' => 'pdf'
+                            )
+                        )
+                    ),
                 )
             )
         )
@@ -53,6 +74,9 @@ return array(
     'view_manager' => array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
+        ),
+        'strategies' => array(
+            'ViewJsonStrategy',
         ),
     ),
 );

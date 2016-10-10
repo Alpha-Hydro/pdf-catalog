@@ -37,10 +37,4 @@ interface CategoryInterface
      */
     public function getFullPath();
 
-
-    /**
-     * @return mixed
-     */
-    public function getSubCategories();
-
 }

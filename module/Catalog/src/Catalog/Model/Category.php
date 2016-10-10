@@ -120,22 +120,4 @@ class Category implements CategoryInterface
         $this->fullPath = $fullPath;
     }
 
-
-    /**
-     * @return null
-     */
-    public function getSubCategories()
-    {
-        return $this->subCategories;
-    }
-
-    /**
-     * @param null $subCategories
-     */
-    public function setSubCategories($subCategories)
-    {
-        $this->subCategories = $subCategories;
-    }
-
-
 }

@@ -36,9 +36,38 @@ class CategoryService implements CategoryServiceInterface
 
     public function findTreeByParentId($id)
     {
+        $result = array();
         $resultSet = $this->categoryMapper->fetchAll();
+        $resultSet = $resultSet->toArray();
 
-        return $resultSet->toArray();
+        foreach ($resultSet as $item) {
+            $result[$item['parent_id']][] = $item;
+        }
+
+        $resultTree = $this->_tree_recurse($result, $result[$id]);
+
+        return $resultTree;
+    }
+
+    protected function _tree_recurse( &$array, $parent, $level = 1)
+    {
+        $tree = array();
+
+        if($parent){
+            foreach ($parent as $row)
+            {
+                $row['level'] = $level;
+                if(isset($array[$row['id']]))
+                {
+                    $level++;
+                    $row['sub_categories'] = $this->_tree_recurse($array, $array[$row['id']], $level);
+                    $level--;
+                }
+                $tree[] = $row;
+            }
+        }
+
+        return $tree;
     }
 
     public function findCategoriesByParentId($id)

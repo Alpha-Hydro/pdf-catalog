@@ -10,6 +10,8 @@
     "require": {
         "php": ">=5.5",
         "zendframework/zendframework": "~2.5",
-        "zendframework/zftool": "dev-master"
+        "zendframework/zftool": "dev-master",
+        "dino/dompdf-module": "dev-master",
+        "qu-modules/qu-tcpdf": "dev-master"
     }
 }

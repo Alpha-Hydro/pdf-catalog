@@ -1,3 +1,21 @@
-Module: Catalog
-Controller: Index
-Action: tree
+<h1 class="page-header">
+    <?=($this->category)?$this->escapeHtml($this->category->getName()):'Каталог';?>
+</h1>
+
+<?php if(0 != count($this->subCategories)): ?>
+    <?php foreach ($this->subCategories as $category): ?>
+        <article>
+            <h3 id="category<?= $category['id'] ?>"><?= $category['name'] ?></h3>
+
+            <p>
+                <a href="<?=($category['sub_categories'])
+                    ? $this->url('catalog/tree',['id' => $category['id'] ])
+                    : $this->url('catalog/detail', ['id' => $category['id'] ]) ?>">
+                    <?= $category['full_path'] ?>
+                </a>
+                <?= ($category['sub_categories'])?'('.count($category['sub_categories']).')':'' ?>
+            </p>
+
+        </article>
+    <?php endforeach ?>
+<?php endif;?>
