@@ -9,8 +9,10 @@ return array(
     'modules' => array(
         'Application',
         'Catalog',
-        'DOMPDFModule',
-        'QuTcPdf',
+        'TCPDFModule',
+        'TcPdf'
+//        'DOMPDFModule',
+//        'QuTcPdf',
     ),
     'module_listener_options' => array(
         'module_paths' => array(

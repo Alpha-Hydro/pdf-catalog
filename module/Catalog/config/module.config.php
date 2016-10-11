@@ -67,6 +67,24 @@ return array(
                             )
                         )
                     ),
+                    'tcpdf' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route'    => '/tcpdf',
+                            'defaults' => array(
+                                'action' => 'tcpdf'
+                            )
+                        )
+                    ),
+                    'dompdf' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route'    => '/dompdf',
+                            'defaults' => array(
+                                'action' => 'dompdf'
+                            )
+                        )
+                    ),
                 )
             )
         )

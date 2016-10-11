@@ -11,7 +11,9 @@
         "php": ">=5.5",
         "zendframework/zendframework": "~2.5",
         "zendframework/zftool": "dev-master",
-        "dino/dompdf-module": "dev-master",
-        "qu-modules/qu-tcpdf": "dev-master"
+        "dompdf/dompdf": "^0.7.0",
+        "tecnickcom/tcpdf": "^6.2",
+        "psyipm/zf-tcpdf": "dev-master",
+        "vladmeh/zf2-tcpdf": "dev-master"
     }
 }

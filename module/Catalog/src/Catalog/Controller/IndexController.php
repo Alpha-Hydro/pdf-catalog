@@ -3,10 +3,10 @@
 namespace Catalog\Controller;
 
 use Catalog\Service\CategoryServiceInterface;
+use TCPDF;
+use TCPDF_FONTS;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use DOMPDFModule\View\Model\PdfModel;
-use QuTcPdf\Module;
 
 class IndexController extends AbstractActionController
 {
@@ -24,28 +24,28 @@ class IndexController extends AbstractActionController
     public function indexAction()
     {
         $id = '0';
-        return new ViewModel([
-            'categories' => $this->categoryService->findCategoriesByParentId($id)
-        ]);
+                        return new ViewModel([
+                            'categories' => $this->categoryService->findCategoriesByParentId($id)
+                        ]);
     }
 
     public function detailAction()
     {
         $id = $this->params()->fromRoute('id');
 
-        return new ViewModel([
-            'category' => $this->categoryService->find($id)
-        ]);
+                        return new ViewModel([
+                            'category' => $this->categoryService->find($id)
+                        ]);
     }
 
     public function listAction()
     {
         $id = $this->params()->fromRoute('id');
 
-        return new ViewModel([
-            'category' => ($id != 0)?$this->categoryService->find($id):null,
-            'subCategories' => $this->categoryService->findCategoriesByParentId($id)
-        ]);
+                        return new ViewModel([
+                            'category' => ($id != 0)?$this->categoryService->find($id):null,
+                            'subCategories' => $this->categoryService->findCategoriesByParentId($id)
+                        ]);
     }
 
     public function treeAction()
@@ -64,21 +64,19 @@ class IndexController extends AbstractActionController
 
     public function pdfAction()
     {
-        $pdf = new PdfModel();
-        //$pdf->setOption('filename', 'monthly-report'); // Triggers PDF download, automatically appends ".pdf"
-        $pdf->setOption('paperSize', 'a4'); // Defaults to "8x11"
-        //$pdf->setOption('paperOrientation', 'landscape'); // Defaults to "portrait"
-        $pdf->setOption('defaultFont', 'DejaVu');
+        // instantiate and use the dompdf class
+        /*$dompdf = new Dompdf();
+        $dompdf->loadHtml('Привет мир');
 
-        //\Zend\Debug\Debug::dump($pdf->getOptions());
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4', 'landscape');
 
-        $id = 0;
-        // To set view variables
-        $pdf->setVariables(array(
-            'categories' => $this->categoryService->findTreeByParentId($id)
-        ));
+        // Render the HTML as PDF
+        $dompdf->render();
 
-        return $pdf;
+        // Output the generated PDF to Browser
+        $dompdf->stream(null, ['Attachment' => 0]);*/
+
 
         /*$pdf = new Module();
         $pdf = $pdf->MyPdf();
@@ -92,6 +90,37 @@ class IndexController extends AbstractActionController
         $pdf->Write(0, 'Catalog');
 
         $pdf->Output();*/
+    }
+
+    public function tcpdfAction()
+    {
+        TCPDF_FONTS::addTTFfont(__DIR__.'/../../../../../data/fonts/ArialNarrow.ttf', 'TrueTypeUnicode');
+        TCPDF_FONTS::addTTFfont(__DIR__.'/../../../../../data/fonts/ArialNarrow-Bold.ttf', 'TrueTypeUnicode');
+        TCPDF_FONTS::addTTFfont(__DIR__.'/../../../../../data/fonts/ArialNarrow-BoldItalic.ttf', 'TrueTypeUnicode');
+        TCPDF_FONTS::addTTFfont(__DIR__.'/../../../../../data/fonts/ArialNarrow-Italic.ttf', 'TrueTypeUnicode');
+
+
+        /*$view = new ViewModel();
+
+        $renderer = $this->getServiceLocator()->get('Zend\View\Renderer\RendererInterface');
+        $view->setTemplate('partial/test');
+        $html = $renderer->render($view);*/
+
+        $html = '<h1>Привет Мир</h1>';
+
+        $pdf = new TCPDF();
+
+        $pdf->SetFont('arialnarrow', '', 14, '', false);
+
+        $pdf->AddPage();
+        //$pdf->Write(20, 'Привет мир');
+        $pdf->writeHTML($html);
+        $pdf->Output();
+    }
+
+    public function dompdfAction()
+    {
+        return new ViewModel();
     }
 
 
