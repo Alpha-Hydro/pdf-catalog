@@ -10,7 +10,8 @@ return array(
         'Application',
         'Catalog',
         'TCPDFModule',
-        'TcPdf'
+        'TcPdf',
+        'dompdfmodule'
 //        'DOMPDFModule',
 //        'QuTcPdf',
     ),

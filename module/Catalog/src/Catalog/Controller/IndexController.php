@@ -4,9 +4,9 @@ namespace Catalog\Controller;
 
 use Catalog\Service\CategoryServiceInterface;
 use TCPDF;
-use TCPDF_FONTS;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\View\Renderer\RendererInterface;
 
 class IndexController extends AbstractActionController
 {
@@ -16,36 +16,59 @@ class IndexController extends AbstractActionController
      */
     protected $categoryService = null;
 
-    public function __construct(\Catalog\Service\CategoryServiceInterface $categoryService)
+    /**
+     * @var \Dompdf\Dompdf
+     */
+    protected $dompdf = null;
+
+    /**
+     * @var TCPDF
+     */
+    protected $tcpdf = null;
+
+    /**
+     * @var RendererInterface
+     */
+    protected $renderer = null;
+
+    public function __construct(
+        \Catalog\Service\CategoryServiceInterface $categoryService,
+        $dompdf,
+        $tcpdf,
+        $renderer
+    )
     {
         $this->categoryService = $categoryService;
+        $this->dompdf = $dompdf;
+        $this->tcpdf = $tcpdf;
+        $this->renderer = $renderer;
     }
 
     public function indexAction()
     {
         $id = '0';
-                        return new ViewModel([
-                            'categories' => $this->categoryService->findCategoriesByParentId($id)
-                        ]);
+        return new ViewModel([
+            'categories' => $this->categoryService->findCategoriesByParentId($id)
+        ]);
     }
 
     public function detailAction()
     {
         $id = $this->params()->fromRoute('id');
 
-                        return new ViewModel([
-                            'category' => $this->categoryService->find($id)
-                        ]);
+        return new ViewModel([
+            'category' => $this->categoryService->find($id)
+        ]);
     }
 
     public function listAction()
     {
         $id = $this->params()->fromRoute('id');
 
-                        return new ViewModel([
-                            'category' => ($id != 0)?$this->categoryService->find($id):null,
-                            'subCategories' => $this->categoryService->findCategoriesByParentId($id)
-                        ]);
+        return new ViewModel([
+            'category' => ($id != 0)?$this->categoryService->find($id):null,
+            'subCategories' => $this->categoryService->findCategoriesByParentId($id)
+        ]);
     }
 
     public function treeAction()
@@ -64,63 +87,48 @@ class IndexController extends AbstractActionController
 
     public function pdfAction()
     {
-        // instantiate and use the dompdf class
-        /*$dompdf = new Dompdf();
-        $dompdf->loadHtml('Привет мир');
+        $id = '0';
+        $view = new ViewModel([
+            'categories' => $this->categoryService->findTreeByParentId($id)
+        ]);
 
-        // (Optional) Setup the paper size and orientation
-        $dompdf->setPaper('A4', 'landscape');
+        $renderer = $this->renderer;
+        $view->setTemplate('catalog/index/pdf');
+        $html = $renderer->render($view);
 
-        // Render the HTML as PDF
-        $dompdf->render();
-
-        // Output the generated PDF to Browser
-        $dompdf->stream(null, ['Attachment' => 0]);*/
-
-
-        /*$pdf = new Module();
-        $pdf = $pdf->MyPdf();
-
-        $pdf->setHeaderData($ln = 0,$lw = 0,$ht = 0,$hs = 0,$tc = array(255,255,255),$lc = array(255,255,255));
-        $pdf->setFooterData($tc = array(255,255,255),$lc = array(255,255,255));
-        $pdf->setPageOrientation($orientation='P', $autopagebreak='L', $bottommargin=-200);
-
-        $pdf->AddPage();
-
-        $pdf->Write(0, 'Catalog');
-
-        $pdf->Output();*/
+        \Zend\Debug\Debug::dump($html);die();
     }
 
     public function tcpdfAction()
     {
-        TCPDF_FONTS::addTTFfont(__DIR__.'/../../../../../data/fonts/ArialNarrow.ttf', 'TrueTypeUnicode');
-        TCPDF_FONTS::addTTFfont(__DIR__.'/../../../../../data/fonts/ArialNarrow-Bold.ttf', 'TrueTypeUnicode');
-        TCPDF_FONTS::addTTFfont(__DIR__.'/../../../../../data/fonts/ArialNarrow-BoldItalic.ttf', 'TrueTypeUnicode');
-        TCPDF_FONTS::addTTFfont(__DIR__.'/../../../../../data/fonts/ArialNarrow-Italic.ttf', 'TrueTypeUnicode');
+
+        $id = '0';
+        $view = new ViewModel([
+            'categories' => $this->categoryService->findTreeByParentId($id)
+        ]);
+
+        $renderer = $this->renderer;
+        $view->setTemplate('catalog/index/pdf');
+        $html = $renderer->render($view);
 
 
-        /*$view = new ViewModel();
+        $pdf = $this->tcpdf;
 
-        $renderer = $this->getServiceLocator()->get('Zend\View\Renderer\RendererInterface');
-        $view->setTemplate('partial/test');
-        $html = $renderer->render($view);*/
-
-        $html = '<h1>Привет Мир</h1>';
-
-        $pdf = new TCPDF();
-
-        $pdf->SetFont('arialnarrow', '', 14, '', false);
+        $pdf->SetFont('arialnarrow', '', 12, '', false);
 
         $pdf->AddPage();
-        //$pdf->Write(20, 'Привет мир');
-        $pdf->writeHTML($html);
+
+        $pdf->writeHTML($html, true, false, true, false, '');
+
         $pdf->Output();
     }
 
     public function dompdfAction()
     {
-        return new ViewModel();
+        $dompdf = $this->dompdf;
+        $dompdf->loadHtml('<strong>Привет мир</strong>');
+        $dompdf->render();
+        $dompdf->stream(null, ['Attachment' => 0]);
     }
 
 

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d793b22329460c79c1449a821410b501",
-    "content-hash": "162e0ad194e7a81633167315673284b1",
+    "hash": "a097ec80890849f8d587bb278b2ec968",
+    "content-hash": "98167ec561f25ab4618a155731f0639a",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -148,6 +148,45 @@
             "description": "DOMPDF is a CSS 2.1 compliant HTML to PDF converter",
             "homepage": "https://github.com/dompdf/dompdf",
             "time": "2016-05-11 00:36:29"
+        },
+        {
+            "name": "mikemix/dompdfmodule",
+            "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mikemix/dompdfmodule.git",
+                "reference": "2f292ded9e1388a29213203a5c1cadc77382ab6b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mikemix/dompdfmodule/zipball/2f292ded9e1388a29213203a5c1cadc77382ab6b",
+                "reference": "2f292ded9e1388a29213203a5c1cadc77382ab6b",
+                "shasum": ""
+            },
+            "require": {
+                "dompdf/dompdf": "^0.7.0",
+                "php": "^5.5 || ^7.0",
+                "zendframework/zend-servicemanager": "^2.0 || ^3.0"
+            },
+            "suggest": {
+                "mikemix/mxdi-module": "Configure dependency injection with annotations"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "dompdfmodule\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "DOMPDF Zend Framework lightweight module",
+            "homepage": "https://www.phpcontext.com",
+            "keywords": [
+                "dompdf",
+                "pdf",
+                "zf2",
+                "zf3"
+            ],
+            "time": "2016-08-25 13:20:15"
         },
         {
             "name": "myclabs/deep-copy",

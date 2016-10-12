@@ -1,26 +1,8 @@
-<style>
-    @font-face {
-        font-family: 'ArralNarrow';
-        font-style: normal;
-        font-weight: normal;
-        src: url(http://pdf.alpha-hydro.loc/fonts/ArrialNarrow.ttf) format('truetype');
-    }
-    body{
-        font-family: "ArialNarrow";
-    }
-</style>
 <?php foreach ($this->categories as $category): ?>
-    <div>
-        <h3><?= $category['name'] ?></h3>
-
-        <p>
-            <a href="<?=($category['sub_categories'])
-                ? $this->url('catalog/tree',['id' => $category['id'] ])
-                : $this->url('catalog/detail', ['id' => $category['id'] ]) ?>">
-                <?= $category['full_path'] ?>
-            </a>
+    <ul>
+        <li>
+            <?= $category['name'] ?>
             <?= ($category['sub_categories'])?'('.count($category['sub_categories']).')':'' ?>
-        </p>
-
-    </div>
+        </li>
+    </ul>
 <?php endforeach ?>
