@@ -13,7 +13,6 @@
         "zendframework/zftool": "dev-master",
         "dompdf/dompdf": "^0.7.0",
         "tecnickcom/tcpdf": "^6.2",
-        "psyipm/zf-tcpdf": "dev-master",
         "vladmeh/zf2-tcpdf": "dev-master",
         "mikemix/dompdfmodule": "^3.0"
     }

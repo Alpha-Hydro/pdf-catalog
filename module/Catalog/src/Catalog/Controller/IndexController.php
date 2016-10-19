@@ -111,14 +111,43 @@ class IndexController extends AbstractActionController
         $view->setTemplate('catalog/index/pdf');
         $html = $renderer->render($view);
 
-
         $pdf = $this->tcpdf;
+
+        $pdf->SetCreator('Alpha-Hydro');
+        $pdf->SetAuthor('Alpha-Hydro');
+        $pdf->SetTitle('Alpha-Hydro. Каталог товаров. Содержание');
+        $pdf->SetSubject('Alpha-Hydro');
+        $pdf->SetKeywords('Alpha-Hydro, PDF, каталог, гидравлика');
+
+        // set default header data
+        $pdf->SetHeaderData('', 0, 'Содержание', '');
+
+        // set header and footer fonts
+        $pdf->setHeaderFont(array('arialnarrow', '', 12));
+        $pdf->setFooterFont(array('arialnarrow', '', 12));
+
+        // set default monospaced font
+        $pdf->SetDefaultMonospacedFont('arialnarrow');
+
+        // set margins
+        $pdf->SetMargins(PDF_MARGIN_LEFT, 20, PDF_MARGIN_RIGHT);
+        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+        // set auto page breaks
+        $pdf->SetAutoPageBreak(TRUE, 20);
+
+        // set image scale factor
+        $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
 
         $pdf->SetFont('arialnarrow', '', 12, '', false);
 
         $pdf->AddPage();
 
-        $pdf->writeHTML($html, true, false, true, false, '');
+        $pdf->writeHTML($html);
+
+        //$pdf->lastPage();
 
         $pdf->Output();
     }
