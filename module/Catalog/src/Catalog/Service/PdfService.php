@@ -11,7 +11,7 @@ namespace Catalog\Service;
 
 use TCPDF;
 
-class PdfService extends TCPDF implements PdfServiceInterface
+class PdfService extends TCPDF
 {
     protected $_widthWorkspacePage;
 

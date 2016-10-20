@@ -20,7 +20,7 @@ class IndexControllerFactory implements FactoryInterface
         $realServiceLocator = $serviceLocator->getServiceLocator();
         $categoryService        = $realServiceLocator->get('Catalog\Service\CategoryServiceInterface');
         $renderer = $realServiceLocator->get('Zend\View\Renderer\RendererInterface');
-        $pdfService       = $realServiceLocator->get('Catalog\Service\PdfServiceInterface');
+        $pdfService       = $realServiceLocator->get('Catalog\Service\PdfService');
 
         return new IndexController(
             $categoryService,

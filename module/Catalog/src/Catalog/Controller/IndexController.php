@@ -3,7 +3,7 @@
 namespace Catalog\Controller;
 
 use Catalog\Service\CategoryServiceInterface;
-use Catalog\Service\PdfServiceInterface;
+use Catalog\Service\PdfService;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\RendererInterface;
@@ -17,7 +17,7 @@ class IndexController extends AbstractActionController
     protected $categoryService = null;
 
     /**
-     * @var PdfServiceInterface
+     * @var PdfService
      */
     protected $pdfService = null;
 
@@ -27,8 +27,8 @@ class IndexController extends AbstractActionController
     protected $renderer = null;
 
     public function __construct(
-        \Catalog\Service\CategoryServiceInterface $categoryService,
-        \Catalog\Service\PdfServiceInterface $pdfService,
+        CategoryServiceInterface $categoryService,
+        PdfService $pdfService,
         $renderer
     )
     {

@@ -7,7 +7,7 @@ use Catalog\Factory\ZendDbSqlMapperFactory;
 use Catalog\Mapper\CategoryMapperInterface;
 use Catalog\Service\CategoryServiceInterface;
 
-use Catalog\Service\PdfServiceInterface;
+use Catalog\Service\PdfService;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Adapter\AdapterServiceFactory;
 
@@ -37,7 +37,7 @@ class Module
             'factories' => [
                 CategoryMapperInterface::class => ZendDbSqlMapperFactory::class,
                 CategoryServiceInterface::class => CategoryServiceFactory::class,
-                PdfServiceInterface::class => PdfServiceFactory::class,
+                PdfService::class => PdfServiceFactory::class,
                 Adapter::class => AdapterServiceFactory::class,
             ],
             'invokables' => [],
