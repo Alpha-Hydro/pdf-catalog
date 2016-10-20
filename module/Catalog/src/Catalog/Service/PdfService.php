@@ -10,14 +10,10 @@
 namespace Catalog\Service;
 
 use TCPDF;
-use TCPDF_IMAGES;
-
 
 class PdfService extends TCPDF implements PdfServiceInterface
 {
     protected $_widthWorkspacePage;
-
-    protected $_last_page_flag = true;
 
     public function __construct()
     {
@@ -32,7 +28,10 @@ class PdfService extends TCPDF implements PdfServiceInterface
         $headerdata = $this->getHeaderData();
 
         $this->SetFont($headerfont[0], 'B', $headerfont[2] + 1);
-        $this->Write(0, $headerdata['title']);
+
+        $align = ($this->getNumPages() % 2 === 0)?'':'R';
+
+        $this->Cell($this->_widthWorkspacePage,0,$headerdata['title'], 0, 0, $align);
 
         $this->SetY(15);
         // set colors for gradients (r,g,b) or (grey 0-255)
@@ -48,10 +47,70 @@ class PdfService extends TCPDF implements PdfServiceInterface
 
     public function Footer()
     {
-        if($this->_last_page_flag){
-            $this->SetY(-15);
-            $this->showSignature();
+        $this->SetY(-15);
+
+        if($this->getNumPages() % 2 === 0){
+            $this->showFooterEvenPage();
         }
+        else{
+            $this->showFooterOddPage();
+        }
+    }
+
+    public function Output($name='doc.pdf', $dest='I')
+    {
+        parent::Output($name, $dest);
+    }
+
+    public function defaultSettingsPage()
+    {
+        $this->SetCreator('Alpha-Hydro');
+        $this->SetAuthor('Alpha-Hydro');
+        $this->SetTitle('Alpha-Hydro. Каталог товаров.');
+        $this->SetSubject('Alpha-Hydro');
+        $this->SetKeywords('Alpha-Hydro, PDF, каталог, гидравлика');
+
+        // set header and footer fonts
+        $this->setHeaderFont(array('arialnarrow', '', 12));
+        $this->setFooterFont(array('arialnarrow', '', 12));
+
+        // set default monospaced font
+        $this->SetDefaultMonospacedFont('freeserif');
+
+        // set margins
+        $this->SetMargins(PDF_MARGIN_LEFT, 20, PDF_MARGIN_RIGHT);
+        $this->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $this->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+        // set auto page breaks
+        $this->SetAutoPageBreak(TRUE, 20);
+
+        // set image scale factor
+        $this->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+        $this->SetFont('arialnarrow', '', 12, '', false);
+
+        return $this;
+    }
+
+    public function introduction($html)
+    {
+        $this->SetHeaderData('', 0, 'Введение', '');
+        $this->AddPage();
+        $this->writeHTML($html);
+        $this->lastPage();
+
+        return $this;
+    }
+
+    public function tableOfContent($html)
+    {
+        $this->SetHeaderData('', 0, 'Содержание', '');
+        $this->AddPage();
+        $this->writeHTML($html);
+        $this->lastPage();
+
+        return $this;
     }
 
     /**
@@ -65,16 +124,6 @@ class PdfService extends TCPDF implements PdfServiceInterface
     }
 
     /**
-     * @param boolean $last_page_flag
-     * @return PdfService
-     */
-    public function setLastPageFlag($last_page_flag)
-    {
-        $this->_last_page_flag = $last_page_flag;
-        return $this;
-    }
-
-    /**
      * @return mixed
      */
     public function getWidthWorkspacePage()
@@ -82,15 +131,7 @@ class PdfService extends TCPDF implements PdfServiceInterface
         return $this->_widthWorkspacePage;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isLastPageFlag()
-    {
-        return $this->_last_page_flag;
-    }
-
-    private function showSignature()
+    private function showFooterEvenPage()
     {
         $image_file = __DIR__ .'/../../../../../data/images/pdf/alfa-hydro.png';
         $this->Image($image_file, $this->original_lMargin, $this->y, 50, '', 'PNG', '', 'M', true, 150, '', false, false, 0, false, false, false);
@@ -101,9 +142,37 @@ class PdfService extends TCPDF implements PdfServiceInterface
         $numberPageWith = 20;
         $this->Cell($this->getPageWidth() - $this->x - $numberPageWith - 3, 7, 'www.alpha-hydro.com', 0, 0, 'C', true, 'http://alpha-hydro.com/catalog', 0, false, 'M');
         $this->SetX($this->x + 3);
+
+        //Номер страницы
+        $this->setCellPaddings(5, 0, 0, 0);
         $this->SetFillColor(0,148,218);
         $this->SetTextColor(255);
         $this->SetFont('', 'B', 10);
-        $this->Cell($numberPageWith, 7, $this->getAliasNumPage(), 0, 1, 'C', true, '', 0, false, 'M');
+        $this->Cell($numberPageWith, 7, $this->getNumPages(), 0, 1, 'L', true, '', 0, false, 'M');
+    }
+
+    private function showFooterOddPage()
+    {
+        $this->SetFont('', 'B', 10);
+
+        //Номер страницы
+        $numberPageWith = 20;
+        $this->SetXY(0, $this->y +6);
+        $this->setCellPaddings(0, 0, 5, 0);
+        $this->SetFillColor(0,148,218);
+        $this->SetTextColor(255);
+        $this->Cell($numberPageWith, 7, $this->getNumPages(), 0, 0, 'R', true, '', 0, false, 'M');
+
+        //Строка
+        $this->SetX($this->x + 3);
+        $this->SetFont('');
+        $this->SetFillColor(228,228,228);
+        $this->SetTextColor(0);
+        $this->Cell($this->getPageWidth() - $this->x - $this->original_rMargin - 53, 7, 'www.alpha-hydro.com', 0, 0, 'C', true, 'http://alpha-hydro.com/catalog', 0, false, 'M');
+
+        //Логотип
+        $this->SetX($this->x +3);
+        $image_file = __DIR__ .'/../../../../../data/images/pdf/alfa-hydro.png';
+        $this->Image($image_file, $this->x, $this->y -6, 50, '', 'PNG', '', 'M', true, 150, '', false, false, 0, false, false, false);
     }
 }

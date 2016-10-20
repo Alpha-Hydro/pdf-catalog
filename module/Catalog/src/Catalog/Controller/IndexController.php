@@ -3,7 +3,7 @@
 namespace Catalog\Controller;
 
 use Catalog\Service\CategoryServiceInterface;
-use TCPDF;
+use Catalog\Service\PdfServiceInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\RendererInterface;
@@ -17,14 +17,9 @@ class IndexController extends AbstractActionController
     protected $categoryService = null;
 
     /**
-     * @var \Dompdf\Dompdf
+     * @var PdfServiceInterface
      */
-    protected $dompdf = null;
-
-    /**
-     * @var TCPDF
-     */
-    protected $tcpdf = null;
+    protected $pdfService = null;
 
     /**
      * @var RendererInterface
@@ -33,14 +28,12 @@ class IndexController extends AbstractActionController
 
     public function __construct(
         \Catalog\Service\CategoryServiceInterface $categoryService,
-        $dompdf,
-        $tcpdf,
+        \Catalog\Service\PdfServiceInterface $pdfService,
         $renderer
     )
     {
         $this->categoryService = $categoryService;
-        $this->dompdf = $dompdf;
-        $this->tcpdf = $tcpdf;
+        $this->pdfService = $pdfService;
         $this->renderer = $renderer;
     }
 
@@ -87,79 +80,25 @@ class IndexController extends AbstractActionController
 
     public function pdfAction()
     {
-        $id = '0';
-        $view = new ViewModel([
-            'categories' => $this->categoryService->findTreeByParentId($id)
-        ]);
+        $pdf = $this->pdfService;
+        $pdf->defaultSettingsPage();
 
-        $renderer = $this->renderer;
-        $view->setTemplate('catalog/index/pdf');
-        $html = $renderer->render($view);
-
-        \Zend\Debug\Debug::dump($html);die();
-    }
-
-    public function tcpdfAction()
-    {
+        $view = new ViewModel();
+        $view->setTemplate('partial/pdf/introduction');
+        $html = $this->renderer->render($view);
+        $pdf->introduction($html);
 
         $id = '0';
         $view = new ViewModel([
             'categories' => $this->categoryService->findTreeByParentId($id)
         ]);
 
-        $renderer = $this->renderer;
-        $view->setTemplate('catalog/index/pdf');
-        $html = $renderer->render($view);
+        $view->setTemplate('partial/pdf/table-of-content');
+        $html = $this->renderer->render($view);
+        $pdf->tableOfContent($html);
 
-        $pdf = $this->tcpdf;
-
-        $pdf->SetCreator('Alpha-Hydro');
-        $pdf->SetAuthor('Alpha-Hydro');
-        $pdf->SetTitle('Alpha-Hydro. Каталог товаров. Содержание');
-        $pdf->SetSubject('Alpha-Hydro');
-        $pdf->SetKeywords('Alpha-Hydro, PDF, каталог, гидравлика');
-
-        // set default header data
-        $pdf->SetHeaderData('', 0, 'Содержание', '');
-
-        // set header and footer fonts
-        $pdf->setHeaderFont(array('arialnarrow', '', 12));
-        $pdf->setFooterFont(array('arialnarrow', '', 12));
-
-        // set default monospaced font
-        $pdf->SetDefaultMonospacedFont('arialnarrow');
-
-        // set margins
-        $pdf->SetMargins(PDF_MARGIN_LEFT, 20, PDF_MARGIN_RIGHT);
-        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-
-        // set auto page breaks
-        $pdf->SetAutoPageBreak(TRUE, 20);
-
-        // set image scale factor
-        $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
-
-
-        $pdf->SetFont('arialnarrow', '', 12, '', false);
-
-        $pdf->AddPage();
-
-        $pdf->writeHTML($html);
-
-        //$pdf->lastPage();
-
-        $pdf->Output();
+        $pdf->Output('catalog.pdf', 'I');
     }
-
-    public function dompdfAction()
-    {
-        $dompdf = $this->dompdf;
-        $dompdf->loadHtml('<strong>Привет мир</strong>');
-        $dompdf->render();
-        $dompdf->stream(null, ['Attachment' => 0]);
-    }
-
 
 }
 

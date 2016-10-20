@@ -11,7 +11,11 @@ namespace Catalog\Service;
 
 interface PdfServiceInterface
 {
-    public function Header();
+    public function defaultSettingsPage();
 
-    public function Footer();
+    public function introduction($html);
+
+    public function tableOfContent($html);
+
+    public function Output($name='doc.pdf', $dest='I');
 }

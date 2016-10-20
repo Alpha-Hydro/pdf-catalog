@@ -1,0 +1,25 @@
+<ul style="list-style-type: none">
+    <?php foreach ($this->categories as $category1): ?>
+        <li>
+            <span style="font-weight: bold; font-size: 14pt; color: rgb(237, 133, 31)"><?=$category1['name'];?></span>
+            <?php if ($category1['sub_categories']):?>
+                <ul>
+                    <?php foreach ($category1['sub_categories'] as $category2):?>
+                        <li>
+                            <span style="font-weight: bold;"><?=$category2['name'];?></span>
+                            <?php if ($category2['sub_categories']):?>
+                                <ul>
+                                    <?php foreach ($category2['sub_categories'] as $category3):?>
+                                        <li>
+                                            <?=$category3['name'];?>
+                                        </li>
+                                    <?php endforeach;?>
+                                </ul>
+                            <?php endif;?>
+                        </li>
+                    <?php endforeach;?>
+                </ul>
+            <?php endif;?>
+        </li>
+    <?php endforeach ?>
+</ul>

@@ -11,8 +11,6 @@ return array(
         'Catalog',
         'TCPDFModule',
         'dompdfmodule'
-//        'DOMPDFModule',
-//        'QuTcPdf',
     ),
     'module_listener_options' => array(
         'module_paths' => array(
