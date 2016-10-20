@@ -26,18 +26,18 @@ class CategoryService implements CategoryServiceInterface
 
     public function fetchAll()
     {
-        return $this->categoryMapper->fetchAll();
+        return $this->categoryMapper->fetchAllCategories();
     }
 
     public function find($id)
     {
-        return $this->categoryMapper->find($id);
+        return $this->categoryMapper->findCategory($id);
     }
 
     public function findTreeByParentId($id)
     {
         $result = array();
-        $resultSet = $this->categoryMapper->fetchAll();
+        $resultSet = $this->categoryMapper->fetchAllCategories();
         $resultSet = $resultSet->toArray();
 
         foreach ($resultSet as $item) {
@@ -72,7 +72,7 @@ class CategoryService implements CategoryServiceInterface
 
     public function findCategoriesByParentId($id)
     {
-        $resultSet = $this->categoryMapper->fetchAll();
+        $resultSet = $this->categoryMapper->fetchAllCategories();
 
         $subCategories = array();
 

@@ -3,11 +3,14 @@ namespace Catalog;
 
 use Catalog\Factory\CategoryServiceFactory;
 use Catalog\Factory\PdfServiceFactory;
+use Catalog\Factory\ProductServiceFactory;
 use Catalog\Factory\ZendDbSqlMapperFactory;
 use Catalog\Mapper\CategoryMapperInterface;
+use Catalog\Mapper\ProductMapperInterface;
 use Catalog\Service\CategoryServiceInterface;
 
 use Catalog\Service\PdfService;
+use Catalog\Service\ProductServiceInterface;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Adapter\AdapterServiceFactory;
 
@@ -36,7 +39,9 @@ class Module
             'aliases' => [],
             'factories' => [
                 CategoryMapperInterface::class => ZendDbSqlMapperFactory::class,
+                ProductMapperInterface::class => ZendDbSqlMapperFactory::class,
                 CategoryServiceInterface::class => CategoryServiceFactory::class,
+                ProductServiceInterface::class => ProductServiceFactory::class,
                 PdfService::class => PdfServiceFactory::class,
                 Adapter::class => AdapterServiceFactory::class,
             ],

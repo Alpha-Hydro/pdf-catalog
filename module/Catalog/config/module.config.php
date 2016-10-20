@@ -58,6 +58,18 @@ return array(
                             )
                         )
                     ),
+                    'product' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route'    => '/product[/:id]',
+                            'defaults' => array(
+                                'action' => 'product'
+                            ),
+                            'constraints' => array(
+                                'id' => '[0-9]\d*'
+                            )
+                        )
+                    ),
                     'pdf' => array(
                         'type' => 'segment',
                         'options' => array(
@@ -67,6 +79,7 @@ return array(
                             )
                         )
                     ),
+
                 )
             )
         )

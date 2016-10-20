@@ -18,10 +18,10 @@ interface CategoryMapperInterface
      * @return CategoryInterface
      * @throws \InvalidArgumentException
      */
-    public function find($id);
+    public function findCategory($id);
 
     /**
      * @return array|CategoryInterface[]
      */
-    public function fetchAll();
+    public function fetchAllCategories();
 }

@@ -4,6 +4,7 @@ namespace Catalog\Controller;
 
 use Catalog\Service\CategoryServiceInterface;
 use Catalog\Service\PdfService;
+use Catalog\Service\ProductServiceInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\RendererInterface;
@@ -17,6 +18,11 @@ class IndexController extends AbstractActionController
     protected $categoryService = null;
 
     /**
+     * @var ProductServiceInterface
+     */
+    protected $productService = null;
+
+    /**
      * @var PdfService
      */
     protected $pdfService = null;
@@ -27,12 +33,14 @@ class IndexController extends AbstractActionController
     protected $renderer = null;
 
     public function __construct(
-        CategoryServiceInterface $categoryService,
-        PdfService $pdfService,
+        \Catalog\Service\CategoryServiceInterface $categoryService,
+        \Catalog\Service\ProductServiceInterface $productService,
+        \Catalog\Service\PdfService $pdfService,
         $renderer
     )
     {
         $this->categoryService = $categoryService;
+        $this->productService = $productService;
         $this->pdfService = $pdfService;
         $this->renderer = $renderer;
     }
@@ -99,6 +107,12 @@ class IndexController extends AbstractActionController
 
         $pdf->Output('catalog.pdf', 'I');
     }
+
+    public function productAction()
+    {
+        return new ViewModel();
+    }
+
 
 }
 
