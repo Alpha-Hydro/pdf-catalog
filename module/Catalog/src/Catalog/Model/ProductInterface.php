@@ -61,4 +61,9 @@ interface ProductInterface
      * @return string
      */
     public function getUploadPathDraft();
+
+    /**
+     * @return int
+     */
+    public function getCategoryId();
 }

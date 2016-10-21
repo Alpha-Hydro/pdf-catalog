@@ -1,3 +1,8 @@
-Module: Catalog
-Controller: Index
-Action: product
+<?php foreach ($products as $product): ?>
+    <article>
+        <h3 id="product<?= $product->getId() ?>"><?= $product->getName() ?></h3>
+        <p>
+            <a href="/catalog/product/<?= $product->getId() ?>"><?= $product->getFullPath() ?></a>
+        </p>
+    </article>
+<?php endforeach ?>

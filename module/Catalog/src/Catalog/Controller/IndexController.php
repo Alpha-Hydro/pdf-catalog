@@ -110,7 +110,13 @@ class IndexController extends AbstractActionController
 
     public function productAction()
     {
-        return new ViewModel();
+        $id = $this->params()->fromRoute('id');
+        if($id)
+            \Zend\Debug\Debug::dump($this->productService->find($id));
+
+        return new ViewModel([
+            'products' => $this->productService->fetchAll()
+        ]);
     }
 
 

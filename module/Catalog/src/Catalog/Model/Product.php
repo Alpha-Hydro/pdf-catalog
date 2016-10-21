@@ -63,6 +63,11 @@ class Product implements ProductInterface
     protected $uploadPathDraft;
 
     /**
+     * @var int
+     */
+    protected $categoryId;
+
+    /**
      * @return int
      */
     public function getId()
@@ -220,6 +225,22 @@ class Product implements ProductInterface
     public function setUploadPathDraft($uploadPathDraft)
     {
         $this->uploadPathDraft = $uploadPathDraft;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCategoryId()
+    {
+        return $this->categoryId;
+    }
+
+    /**
+     * @param int $categoryId
+     */
+    public function setCategoryId($categoryId)
+    {
+        $this->categoryId = $categoryId;
     }
 
 }

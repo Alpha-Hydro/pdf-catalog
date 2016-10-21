@@ -116,6 +116,7 @@ class ZendDbSqlMapper implements CategoryMapperInterface, ProductMapperInterface
                 'deleted != ?' => 1,
                 'active != ?' => 0,
             ])
+            ->join('categories_xref', 'products.id = categories_xref.product_id')
             ->order('sorting ASC');
 
         $stmt   = $sql->prepareStatementForSqlObject($select);
@@ -139,7 +140,10 @@ class ZendDbSqlMapper implements CategoryMapperInterface, ProductMapperInterface
     {
         $sql    = new Sql($this->dbAdapter);
         $select = $sql->select('products');
-        $select->where(array('id = ?' => $id));
+        $select
+            ->where(array('id = ?' => $id))
+            ->join('categories_xref', 'products.id = categories_xref.product_id')
+        ;
 
         $stmt   = $sql->prepareStatementForSqlObject($select);
         $result = $stmt->execute();
