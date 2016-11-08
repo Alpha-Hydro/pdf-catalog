@@ -11,6 +11,7 @@ namespace Catalog\Mapper;
 
 use Catalog\Model\CategoryInterface;
 use Catalog\Model\ProductInterface;
+use Catalog\Model\ProductParamsInterface;
 
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Driver\ResultInterface;
@@ -18,7 +19,10 @@ use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Sql;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 
-class ZendDbSqlMapper implements CategoryMapperInterface, ProductMapperInterface
+class ZendDbSqlMapper implements
+    CategoryMapperInterface,
+    ProductMapperInterface,
+    ProductParamsMapperInterface
 {
     /**
      * @var AdapterInterface
@@ -41,6 +45,11 @@ class ZendDbSqlMapper implements CategoryMapperInterface, ProductMapperInterface
     protected $productPrototype;
 
     /**
+     * @var ProductParamsInterface
+     */
+    protected $productParamsPrototype;
+
+    /**
      * ZendDbSqlMapper constructor.
      * @param AdapterInterface $adapter
      */
@@ -48,13 +57,15 @@ class ZendDbSqlMapper implements CategoryMapperInterface, ProductMapperInterface
         AdapterInterface $adapter,
         HydratorInterface $hydrator,
         CategoryInterface $categoryPrototype,
-        ProductInterface $productPrototype
+        ProductInterface $productPrototype,
+        ProductParamsInterface $productParamsPrototype
     )
     {
         $this->dbAdapter = $adapter;
         $this->hydrator = $hydrator;
         $this->categoryPrototype = $categoryPrototype;
         $this->productPrototype = $productPrototype;
+        $this->productParamsPrototype = $productParamsPrototype;
     }
 
     /**
@@ -153,5 +164,28 @@ class ZendDbSqlMapper implements CategoryMapperInterface, ProductMapperInterface
         }
 
         throw new \InvalidArgumentException("Product with given ID:{$id} not found.");
+    }
+
+    /**
+     * @param $id
+     * @return array|HydratingResultSet
+     */
+    public function fetchParamsByProduct($id)
+    {
+        $sql = new Sql($this->dbAdapter);
+        $select = $sql->select('product_params');
+        $select->where(['product_id = ?' => $id])->order('order ASC');
+
+        $stmt   = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+
+        if ($result instanceof ResultInterface && $result->isQueryResult()) {
+            $resultSet = new HydratingResultSet($this->hydrator, $this->productParamsPrototype);
+            $resultSet->initialize($result);
+
+            return $resultSet;
+        }
+
+        return array();
     }
 }

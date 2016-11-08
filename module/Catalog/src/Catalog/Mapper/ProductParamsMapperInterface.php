@@ -7,24 +7,12 @@
  *
  */
 
-namespace Catalog\Service;
+namespace Catalog\Mapper;
 
-use Catalog\Model\ProductInterface;
 use Catalog\Model\ProductParamsInterface;
 
-interface ProductServiceInterface
+interface ProductParamsMapperInterface
 {
-    /**
-     * @return array|ProductInterface[]
-     */
-    public function fetchAll();
-
-    /**
-     * @param $id int
-     * @return ProductInterface
-     */
-    public function find($id);
-
     /**
      * @param $id
      * @return array | ProductParamsInterface[]

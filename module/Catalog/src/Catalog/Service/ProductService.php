@@ -11,6 +11,7 @@ namespace Catalog\Service;
 
 
 use Catalog\Mapper\ProductMapperInterface;
+use Catalog\Mapper\ProductParamsMapperInterface;
 
 class ProductService implements ProductServiceInterface
 {
@@ -19,9 +20,18 @@ class ProductService implements ProductServiceInterface
      */
     protected $productMapper;
 
-    public function __construct(ProductMapperInterface $productMapper)
+    /**
+     * @var ProductParamsMapperInterface
+     */
+    protected $productParamsMapper;
+
+    public function __construct(
+        ProductMapperInterface $productMapper,
+        ProductParamsMapperInterface $productParamsMapper
+    )
     {
         $this->productMapper = $productMapper;
+        $this->productParamsMapper = $productParamsMapper;
     }
 
     public function fetchAll()
@@ -32,5 +42,10 @@ class ProductService implements ProductServiceInterface
     public function find($id)
     {
         return $this->productMapper->findProduct($id);
+    }
+
+    public function fetchParamsByProduct($id)
+    {
+        return $this->productParamsMapper->fetchParamsByProduct($id);
     }
 }

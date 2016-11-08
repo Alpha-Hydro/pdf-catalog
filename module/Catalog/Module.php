@@ -5,12 +5,15 @@ use Catalog\Factory\CategoryServiceFactory;
 use Catalog\Factory\PdfServiceFactory;
 use Catalog\Factory\ProductServiceFactory;
 use Catalog\Factory\ZendDbSqlMapperFactory;
+
 use Catalog\Mapper\CategoryMapperInterface;
 use Catalog\Mapper\ProductMapperInterface;
-use Catalog\Service\CategoryServiceInterface;
+use Catalog\Mapper\ProductParamsMapperInterface;
 
-use Catalog\Service\PdfService;
+use Catalog\Service\CategoryServiceInterface;
 use Catalog\Service\ProductServiceInterface;
+use Catalog\Service\PdfService;
+
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Adapter\AdapterServiceFactory;
 
@@ -40,6 +43,7 @@ class Module
             'factories' => [
                 CategoryMapperInterface::class => ZendDbSqlMapperFactory::class,
                 ProductMapperInterface::class => ZendDbSqlMapperFactory::class,
+                ProductParamsMapperInterface::class => ZendDbSqlMapperFactory::class,
                 CategoryServiceInterface::class => CategoryServiceFactory::class,
                 ProductServiceInterface::class => ProductServiceFactory::class,
                 PdfService::class => PdfServiceFactory::class,

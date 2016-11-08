@@ -12,6 +12,7 @@ namespace Catalog\Factory;
 use Catalog\Mapper\ZendDbSqlMapper;
 use Catalog\Model\Category;
 use Catalog\Model\Product;
+use Catalog\Model\ProductParams;
 
 
 use Zend\Db\Adapter\Adapter;
@@ -27,7 +28,8 @@ class ZendDbSqlMapperFactory implements FactoryInterface
             $serviceLocator->get(Adapter::class),
             new ClassMethods(),// new ClassMethods(false),
             new Category(),
-            new Product()
+            new Product(),
+            new ProductParams()
         );
     }
 }

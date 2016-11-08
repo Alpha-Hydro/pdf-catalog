@@ -5,6 +5,7 @@ namespace Catalog\Controller;
 use Catalog\Service\CategoryServiceInterface;
 use Catalog\Service\PdfService;
 use Catalog\Service\ProductServiceInterface;
+use Zend\Debug\Debug;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\RendererInterface;
@@ -111,14 +112,16 @@ class IndexController extends AbstractActionController
     public function productAction()
     {
         $id = $this->params()->fromRoute('id');
-        if($id)
-            \Zend\Debug\Debug::dump($this->productService->find($id));
+        if($id){
+            Debug::dump($this->productService->find($id));
+            //Debug::dump($this->productService->fetchParamsByProduct($id));
+        }
 
         return new ViewModel([
-            'products' => $this->productService->fetchAll()
+            'product' => $this->productService->find($id),
+            'productParams' => $this->productService->fetchParamsByProduct($id)
         ]);
     }
-
 
 }
 

@@ -1,8 +1,15 @@
-<?php foreach ($products as $product): ?>
-    <article>
-        <h3 id="product<?= $product->getId() ?>"><?= $product->getName() ?></h3>
-        <p>
-            <a href="/catalog/product/<?= $product->getId() ?>"><?= $product->getFullPath() ?></a>
-        </p>
-    </article>
-<?php endforeach ?>
+<article>
+    <h3 id="product<?= $product->getId() ?>"><?= $product->getName() ?></h3>
+    <p>
+        <a href="/catalog/product/<?= $product->getId() ?>"><?= $product->getFullPath() ?></a>
+    </p>
+    <h4>Свойства</h4>
+    <table class="table table-striped table-condensed product-property">
+        <?php foreach ($productParams as $property):?>
+            <tr>
+                <td><?= $property->getName() ?></td>
+                <td><?= $property->getValue() ?></td>
+            </tr>
+        <?php endforeach;?>
+    </table>
+</article>
