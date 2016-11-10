@@ -92,19 +92,32 @@ class IndexController extends AbstractActionController
         $pdf = $this->pdfService;
         $pdf->defaultSettingsPage();
 
+
+        //Введение
         $view = new ViewModel();
         $view->setTemplate('partial/pdf/introduction');
         $html = $this->renderer->render($view);
         $pdf->introduction($html);
 
+        //Содержание
         $id = '0';
         $view = new ViewModel([
             'categories' => $this->categoryService->findTreeByParentId($id)
         ]);
-
         $view->setTemplate('partial/pdf/table-of-content');
         $html = $this->renderer->render($view);
         $pdf->tableOfContent($html);
+
+
+        $id = '27816';
+        $view = new ViewModel([
+            'product' => $this->productService->find($id),
+            'productParams' => $this->productService->fetchParamsByProduct($id)
+        ]);
+
+        $view->setTemplate('partial/pdf/product');
+        $html = $this->renderer->render($view);
+        $pdf->viewProduct($html);
 
         $pdf->Output('catalog.pdf', 'I');
     }

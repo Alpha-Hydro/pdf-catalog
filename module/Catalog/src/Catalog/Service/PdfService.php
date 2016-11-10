@@ -113,6 +113,16 @@ class PdfService extends TCPDF
         return $this;
     }
 
+    public function viewProduct($html)
+    {
+        $this->SetHeaderData('', 0, '', '');
+        $this->AddPage();
+        $this->writeHTML($html);
+        $this->lastPage();
+
+        return $this;
+    }
+
     /**
      * @param mixed $widthWorkspacePage
      * @return PdfService

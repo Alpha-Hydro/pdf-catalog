@@ -1,0 +1,16 @@
+<span style="font-weight: bold; font-size: xx-large;"><?= $product->getSku() ?></span>
+<br/>
+<span style="font-weight: bold;"><?= $product->getName() ?></span>
+
+<p>
+    <a href="http://pdf.alpha-hydro.loc/catalog/product/<?= $product->getId() ?>"><?= $product->getFullPath() ?></a>
+</p>
+
+<table class="table table-striped table-condensed product-property">
+    <?php foreach ($productParams as $property):?>
+        <tr>
+            <td><?= $property->getName() ?></td>
+            <td><?= $property->getValue() ?></td>
+        </tr>
+    <?php endforeach;?>
+</table>
