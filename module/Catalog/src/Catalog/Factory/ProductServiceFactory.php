@@ -10,6 +10,7 @@
 namespace Catalog\Factory;
 
 use Catalog\Mapper\ModificationMapperInterface;
+use Catalog\Mapper\ModificationPropertyMapperInterface;
 use Catalog\Mapper\ProductParamsMapperInterface;
 use Catalog\Mapper\ProductMapperInterface;
 use Catalog\Service\ProductService;
@@ -24,7 +25,8 @@ class ProductServiceFactory implements FactoryInterface
         return new ProductService(
             $serviceLocator->get(ProductMapperInterface::class),
             $serviceLocator->get(ProductParamsMapperInterface::class),
-            $serviceLocator->get(ModificationMapperInterface::class)
+            $serviceLocator->get(ModificationMapperInterface::class),
+            $serviceLocator->get(ModificationPropertyMapperInterface::class)
         );
     }
 }

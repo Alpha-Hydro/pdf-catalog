@@ -126,14 +126,15 @@ class IndexController extends AbstractActionController
     {
         $id = $this->params()->fromRoute('id');
         if($id){
-            Debug::dump($this->productService->find($id));
+            //Debug::dump($this->productService->find($id));
             //Debug::dump($this->productService->fetchParamsByProduct($id));
         }
 
         return new ViewModel([
             'product' => $this->productService->find($id),
             'productParams' => $this->productService->fetchParamsByProduct($id),
-            'modifications' => $this->productService->fetchModificationsByProduct($id)
+            'modifications' => $this->productService->fetchModificationsByProduct($id),
+            'modificationsProperty' => $this->productService->fetchModificationPropertyByProduct($id)
         ]);
     }
 

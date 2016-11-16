@@ -11,6 +11,7 @@ namespace Catalog\Service;
 
 
 use Catalog\Mapper\ModificationMapperInterface;
+use Catalog\Mapper\ModificationPropertyMapperInterface;
 use Catalog\Mapper\ProductMapperInterface;
 use Catalog\Mapper\ProductParamsMapperInterface;
 
@@ -31,15 +32,22 @@ class ProductService implements ProductServiceInterface
      */
     protected $modificationMapper;
 
+    /**
+     * @var ModificationPropertyMapperInterface
+     */
+    protected $modificationPropertyMapper;
+
     public function __construct(
         ProductMapperInterface $productMapper,
         ProductParamsMapperInterface $productParamsMapper,
-        ModificationMapperInterface $modificationMapper
+        ModificationMapperInterface $modificationMapper,
+        ModificationPropertyMapperInterface $modificationPropertyMapper
     )
     {
         $this->productMapper = $productMapper;
         $this->productParamsMapper = $productParamsMapper;
         $this->modificationMapper = $modificationMapper;
+        $this->modificationPropertyMapper = $modificationPropertyMapper;
     }
 
     public function fetchAll()
@@ -60,5 +68,10 @@ class ProductService implements ProductServiceInterface
     public function fetchModificationsByProduct($id)
     {
         return $this->modificationMapper->fetchModificationsByProduct($id);
+    }
+
+    public function fetchModificationPropertyByProduct($id)
+    {
+        return $this->modificationPropertyMapper->fetchModificationPropertiesByProduct($id);
     }
 }

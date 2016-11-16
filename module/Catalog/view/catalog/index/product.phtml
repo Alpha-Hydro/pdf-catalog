@@ -15,10 +15,20 @@
 
     <h4>Модификации</h4>
     <table class="table table-striped table-condensed product-property">
+        <thead>
+            <tr>
+                <td>Название</td>
+            <?php foreach ($this->modificationsProperty as $property):?>
+                <td><?=$property->getName()?></td>
+            <?php endforeach;?>
+            </tr>
+        </thead>
+        <tbody>
         <?php foreach ($this->modifications as $modification):?>
             <tr>
-                <td><?= $modification->getSku() ?></td>
+                <td colspan="<?= count($this->modificationsProperty)+1 ?>"><?= $modification->getSku() ?></td>
             </tr>
         <?php endforeach;?>
+        </tbody>
     </table>
 </article>

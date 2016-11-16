@@ -11,6 +11,7 @@ namespace Catalog\Mapper;
 
 use Catalog\Model\CategoryInterface;
 use Catalog\Model\ModificationInterface;
+use Catalog\Model\ModificationPropertyInterface;
 use Catalog\Model\ProductInterface;
 use Catalog\Model\ProductParamsInterface;
 
@@ -24,7 +25,8 @@ class ZendDbSqlMapper implements
     CategoryMapperInterface,
     ProductMapperInterface,
     ProductParamsMapperInterface,
-    ModificationMapperInterface
+    ModificationMapperInterface,
+    ModificationPropertyMapperInterface
 {
     /**
      * @var AdapterInterface
@@ -57,6 +59,11 @@ class ZendDbSqlMapper implements
     protected $modificationPrototype;
 
     /**
+     * @var ModificationPropertyInterface
+     */
+    protected $modificationPropertyPrototype;
+
+    /**
      * ZendDbSqlMapper constructor.
      * @param AdapterInterface $adapter
      */
@@ -66,7 +73,8 @@ class ZendDbSqlMapper implements
         CategoryInterface $categoryPrototype,
         ProductInterface $productPrototype,
         ProductParamsInterface $productParamsPrototype,
-        ModificationInterface $modificationPrototype
+        ModificationInterface $modificationPrototype,
+        ModificationPropertyInterface $modificationPropertyPrototype
     )
     {
         $this->dbAdapter = $adapter;
@@ -75,6 +83,7 @@ class ZendDbSqlMapper implements
         $this->productPrototype = $productPrototype;
         $this->productParamsPrototype = $productParamsPrototype;
         $this->modificationPrototype = $modificationPrototype;
+        $this->modificationPropertyPrototype = $modificationPropertyPrototype;
     }
 
     /**
@@ -198,6 +207,10 @@ class ZendDbSqlMapper implements
         return array();
     }
 
+    /**
+     * @param $id
+     * @return array|HydratingResultSet
+     */
     public function fetchModificationsByProduct($id)
     {
         $sql = new Sql($this->dbAdapter);
@@ -214,6 +227,33 @@ class ZendDbSqlMapper implements
 
         if ($result instanceof ResultInterface && $result->isQueryResult()) {
             $resultSet = new HydratingResultSet($this->hydrator, $this->modificationPrototype);
+            $resultSet->initialize($result);
+
+            return $resultSet;
+        }
+
+        return array();
+    }
+
+    /**
+     * @param $id
+     * @return array|HydratingResultSet
+     */
+    public function fetchModificationPropertiesByProduct($id)
+    {
+        $sql = new Sql($this->dbAdapter);
+        $select = $sql->select('subproduct_params');
+        $select
+            ->where([
+                'product_id = ?' => $id
+            ])
+            ->order('order ASC');
+
+        $stmt   = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+
+        if ($result instanceof ResultInterface && $result->isQueryResult()) {
+            $resultSet = new HydratingResultSet($this->hydrator, $this->modificationPropertyPrototype);
             $resultSet->initialize($result);
 
             return $resultSet;
