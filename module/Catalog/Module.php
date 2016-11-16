@@ -7,6 +7,7 @@ use Catalog\Factory\ProductServiceFactory;
 use Catalog\Factory\ZendDbSqlMapperFactory;
 
 use Catalog\Mapper\CategoryMapperInterface;
+use Catalog\Mapper\ModificationMapperInterface;
 use Catalog\Mapper\ProductMapperInterface;
 use Catalog\Mapper\ProductParamsMapperInterface;
 
@@ -44,6 +45,7 @@ class Module
                 CategoryMapperInterface::class => ZendDbSqlMapperFactory::class,
                 ProductMapperInterface::class => ZendDbSqlMapperFactory::class,
                 ProductParamsMapperInterface::class => ZendDbSqlMapperFactory::class,
+                ModificationMapperInterface::class => ZendDbSqlMapperFactory::class,
                 CategoryServiceInterface::class => CategoryServiceFactory::class,
                 ProductServiceInterface::class => ProductServiceFactory::class,
                 PdfService::class => PdfServiceFactory::class,

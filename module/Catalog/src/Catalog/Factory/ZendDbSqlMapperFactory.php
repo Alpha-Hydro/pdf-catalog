@@ -13,7 +13,7 @@ use Catalog\Mapper\ZendDbSqlMapper;
 use Catalog\Model\Category;
 use Catalog\Model\Product;
 use Catalog\Model\ProductParams;
-
+use Catalog\Model\Modification;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\ServiceManager\FactoryInterface;
@@ -29,7 +29,8 @@ class ZendDbSqlMapperFactory implements FactoryInterface
             new ClassMethods(),// new ClassMethods(false),
             new Category(),
             new Product(),
-            new ProductParams()
+            new ProductParams(),
+            new Modification()
         );
     }
 }

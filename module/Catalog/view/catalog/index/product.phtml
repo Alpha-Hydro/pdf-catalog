@@ -1,14 +1,23 @@
 <article>
-    <h3 id="product<?= $product->getId() ?>"><?= $product->getName() ?></h3>
+    <h3 id="product<?= $this->product->getId() ?>"><?= $this->product->getName() ?></h3>
     <p>
-        <a href="/catalog/product/<?= $product->getId() ?>"><?= $product->getFullPath() ?></a>
+        <a href="http://alpha-hydro.loc/catalog/<?= $this->product->getFullPath() ?>" target="_blank"><?= $this->product->getFullPath() ?></a>
     </p>
     <h4>Свойства</h4>
     <table class="table table-striped table-condensed product-property">
-        <?php foreach ($productParams as $property):?>
+        <?php foreach ($this->productParams as $param):?>
             <tr>
-                <td><?= $property->getName() ?></td>
-                <td><?= $property->getValue() ?></td>
+                <td><?= $param->getName() ?></td>
+                <td><?= $param->getValue() ?></td>
+            </tr>
+        <?php endforeach;?>
+    </table>
+
+    <h4>Модификации</h4>
+    <table class="table table-striped table-condensed product-property">
+        <?php foreach ($this->modifications as $modification):?>
+            <tr>
+                <td><?= $modification->getSku() ?></td>
             </tr>
         <?php endforeach;?>
     </table>

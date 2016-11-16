@@ -10,6 +10,7 @@
 namespace Catalog\Mapper;
 
 use Catalog\Model\CategoryInterface;
+use Catalog\Model\ModificationInterface;
 use Catalog\Model\ProductInterface;
 use Catalog\Model\ProductParamsInterface;
 
@@ -22,7 +23,8 @@ use Zend\Stdlib\Hydrator\HydratorInterface;
 class ZendDbSqlMapper implements
     CategoryMapperInterface,
     ProductMapperInterface,
-    ProductParamsMapperInterface
+    ProductParamsMapperInterface,
+    ModificationMapperInterface
 {
     /**
      * @var AdapterInterface
@@ -50,6 +52,11 @@ class ZendDbSqlMapper implements
     protected $productParamsPrototype;
 
     /**
+     * @var ModificationInterface
+     */
+    protected $modificationPrototype;
+
+    /**
      * ZendDbSqlMapper constructor.
      * @param AdapterInterface $adapter
      */
@@ -58,7 +65,8 @@ class ZendDbSqlMapper implements
         HydratorInterface $hydrator,
         CategoryInterface $categoryPrototype,
         ProductInterface $productPrototype,
-        ProductParamsInterface $productParamsPrototype
+        ProductParamsInterface $productParamsPrototype,
+        ModificationInterface $modificationPrototype
     )
     {
         $this->dbAdapter = $adapter;
@@ -66,6 +74,7 @@ class ZendDbSqlMapper implements
         $this->categoryPrototype = $categoryPrototype;
         $this->productPrototype = $productPrototype;
         $this->productParamsPrototype = $productParamsPrototype;
+        $this->modificationPrototype = $modificationPrototype;
     }
 
     /**
@@ -181,6 +190,30 @@ class ZendDbSqlMapper implements
 
         if ($result instanceof ResultInterface && $result->isQueryResult()) {
             $resultSet = new HydratingResultSet($this->hydrator, $this->productParamsPrototype);
+            $resultSet->initialize($result);
+
+            return $resultSet;
+        }
+
+        return array();
+    }
+
+    public function fetchModificationsByProduct($id)
+    {
+        $sql = new Sql($this->dbAdapter);
+        $select = $sql->select('subproducts');
+        $select
+            ->where([
+                'deleted != ?' => 1,
+                'parent_id = ?' => $id
+            ])
+            ->order('order ASC');
+
+        $stmt   = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+
+        if ($result instanceof ResultInterface && $result->isQueryResult()) {
+            $resultSet = new HydratingResultSet($this->hydrator, $this->modificationPrototype);
             $resultSet->initialize($result);
 
             return $resultSet;

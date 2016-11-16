@@ -9,6 +9,7 @@
 
 namespace Catalog\Service;
 
+use Catalog\Model\ModificationInterface;
 use Catalog\Model\ProductInterface;
 use Catalog\Model\ProductParamsInterface;
 
@@ -30,4 +31,10 @@ interface ProductServiceInterface
      * @return array | ProductParamsInterface[]
      */
     public function fetchParamsByProduct($id);
+
+    /**
+     * @param $id
+     * @return array | ModificationInterface[]
+     */
+    public function fetchModificationsByProduct($id);
 }

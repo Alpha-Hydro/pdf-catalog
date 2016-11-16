@@ -93,7 +93,7 @@ class IndexController extends AbstractActionController
         $pdf->defaultSettingsPage();
 
 
-        //Введение
+        /*//Введение
         $view = new ViewModel();
         $view->setTemplate('partial/pdf/introduction');
         $html = $this->renderer->render($view);
@@ -106,9 +106,9 @@ class IndexController extends AbstractActionController
         ]);
         $view->setTemplate('partial/pdf/table-of-content');
         $html = $this->renderer->render($view);
-        $pdf->tableOfContent($html);
+        $pdf->tableOfContent($html);*/
 
-
+        //Product
         $id = '27816';
         $view = new ViewModel([
             'product' => $this->productService->find($id),
@@ -132,7 +132,8 @@ class IndexController extends AbstractActionController
 
         return new ViewModel([
             'product' => $this->productService->find($id),
-            'productParams' => $this->productService->fetchParamsByProduct($id)
+            'productParams' => $this->productService->fetchParamsByProduct($id),
+            'modifications' => $this->productService->fetchModificationsByProduct($id)
         ]);
     }
 
