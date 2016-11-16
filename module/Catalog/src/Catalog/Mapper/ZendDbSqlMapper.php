@@ -12,6 +12,7 @@ namespace Catalog\Mapper;
 use Catalog\Model\CategoryInterface;
 use Catalog\Model\ModificationInterface;
 use Catalog\Model\ModificationPropertyInterface;
+use Catalog\Model\ModificationPropertyValueInterface;
 use Catalog\Model\ProductInterface;
 use Catalog\Model\ProductParamsInterface;
 
@@ -26,7 +27,8 @@ class ZendDbSqlMapper implements
     ProductMapperInterface,
     ProductParamsMapperInterface,
     ModificationMapperInterface,
-    ModificationPropertyMapperInterface
+    ModificationPropertyMapperInterface,
+    ModificationPropertyValueMapperInterface
 {
     /**
      * @var AdapterInterface
@@ -64,6 +66,11 @@ class ZendDbSqlMapper implements
     protected $modificationPropertyPrototype;
 
     /**
+     * @var ModificationPropertyValueInterface
+     */
+    protected $modificationPropertyValuePrototype;
+
+    /**
      * ZendDbSqlMapper constructor.
      * @param AdapterInterface $adapter
      */
@@ -74,7 +81,8 @@ class ZendDbSqlMapper implements
         ProductInterface $productPrototype,
         ProductParamsInterface $productParamsPrototype,
         ModificationInterface $modificationPrototype,
-        ModificationPropertyInterface $modificationPropertyPrototype
+        ModificationPropertyInterface $modificationPropertyPrototype,
+        ModificationPropertyValueInterface $modificationPropertyValuePrototype
     )
     {
         $this->dbAdapter = $adapter;
@@ -84,6 +92,7 @@ class ZendDbSqlMapper implements
         $this->productParamsPrototype = $productParamsPrototype;
         $this->modificationPrototype = $modificationPrototype;
         $this->modificationPropertyPrototype = $modificationPropertyPrototype;
+        $this->modificationPropertyValuePrototype = $modificationPropertyValuePrototype;
     }
 
     /**
@@ -260,5 +269,26 @@ class ZendDbSqlMapper implements
         }
 
         return array();
+    }
+
+    public function findValue($modificationId, $propertyId)
+    {
+        $sql    = new Sql($this->dbAdapter);
+        $select = $sql->select('subproduct_params_values');
+        $select
+            ->where([
+                'subproduct_id = ?' => $modificationId,
+                'param_id = ?' => $propertyId
+            ]);
+        ;
+
+        $stmt   = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+
+        if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
+            return $this->hydrator->hydrate($result->current(), $this->modificationPropertyValuePrototype);
+        }
+
+        throw new \InvalidArgumentException("Property value not found.");
     }
 }

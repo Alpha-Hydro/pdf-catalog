@@ -11,6 +11,7 @@ namespace Catalog\Service;
 
 use Catalog\Model\ModificationInterface;
 use Catalog\Model\ModificationPropertyInterface;
+use Catalog\Model\ModificationPropertyValueInterface;
 use Catalog\Model\ProductInterface;
 use Catalog\Model\ProductParamsInterface;
 
@@ -44,4 +45,11 @@ interface ProductServiceInterface
      * @return array | ModificationPropertyInterface[]
      */
     public function fetchModificationPropertyByProduct($id);
+
+    /**
+     * @param $modificationId
+     * @param $propertyId
+     * @return ModificationPropertyValueInterface
+     */
+    public function findModificationPropertyValue($modificationId, $propertyId);
 }
