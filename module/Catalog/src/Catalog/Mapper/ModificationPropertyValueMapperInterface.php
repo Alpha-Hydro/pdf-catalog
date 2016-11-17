@@ -20,5 +20,11 @@ interface ModificationPropertyValueMapperInterface
      * @return ModificationPropertyValueInterface
      * throws \InvalidArgumentException
      */
-    public function findValue($modificationId, $propertyId);
+    public function getModificationPropertyValue($modificationId, $propertyId);
+
+    /**
+     * @param $id
+     * @return array | ModificationPropertyValueInterface[]
+     */
+    public function fetchModificationPropertyValues($id);
 }

@@ -24,9 +24,11 @@
             </tr>
         </thead>
         <tbody>
-        <?php foreach ($this->modifications as $modification):?>
+        <?php foreach ($this->modificationsTable as $row):?>
             <tr>
-                <td colspan="<?= count($this->modificationsProperty)+1 ?>"><?= $modification->getSku() ?></td>
+                <?php foreach ($row as $value):?>
+                    <td><?=$value ?></td>
+                <?php endforeach;?>
             </tr>
         <?php endforeach;?>
         </tbody>

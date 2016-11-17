@@ -2,6 +2,7 @@
 
 namespace Catalog\Controller;
 
+use Catalog\Model\ModificationInterface;
 use Catalog\Service\CategoryServiceInterface;
 use Catalog\Service\PdfService;
 use Catalog\Service\ProductServiceInterface;
@@ -130,12 +131,40 @@ class IndexController extends AbstractActionController
             //Debug::dump($this->productService->fetchParamsByProduct($id));
         }
 
+        $modifications = $this->productService->fetchModificationsByProduct($id);
+        //Debug::dump($this->modificationTableValues($modifications));
+
         return new ViewModel([
             'product' => $this->productService->find($id),
             'productParams' => $this->productService->fetchParamsByProduct($id),
             'modifications' => $this->productService->fetchModificationsByProduct($id),
-            'modificationsProperty' => $this->productService->fetchModificationPropertyByProduct($id)
+            'modificationsProperty' => $this->productService->fetchModificationPropertyByProduct($id),
+            'modificationsTable' => $this->modificationTableValues($modifications)
         ]);
+    }
+
+    /**
+     * @param $modifications array | ModificationInterface[]
+     * @return array
+     */
+    public function modificationTableValues($modifications)
+    {
+        $modificationsTableValues = array();
+        $modificationsArray = $modifications->toArray();
+        if(!empty($modificationsArray))
+            foreach ($modificationsArray as $modification){
+                $values = array();
+                $values[] = $modification["sku"];
+                $modificationPropertyValues = $this->productService->fetchModificationPropertyValues($modification['id']);
+                foreach ($modificationPropertyValues->toArray() as $modificationPropertyValue){
+                    $values[] = $modificationPropertyValue['value'];
+                }
+
+                $modificationsTableValues[] = $values;
+            }
+
+
+        return $modificationsTableValues;
     }
 
 }

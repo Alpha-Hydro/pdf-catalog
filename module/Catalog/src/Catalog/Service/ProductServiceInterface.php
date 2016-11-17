@@ -51,5 +51,11 @@ interface ProductServiceInterface
      * @param $propertyId
      * @return ModificationPropertyValueInterface
      */
-    public function findModificationPropertyValue($modificationId, $propertyId);
+    public function getModificationPropertyValue($modificationId, $propertyId);
+
+    /**
+     * @param $id
+     * @return array | ModificationPropertyValueInterface[]
+     */
+    public function fetchModificationPropertyValues($id);
 }

@@ -271,7 +271,12 @@ class ZendDbSqlMapper implements
         return array();
     }
 
-    public function findValue($modificationId, $propertyId)
+    /**
+     * @param $modificationId
+     * @param $propertyId
+     * @return object
+     */
+    public function getModificationPropertyValue($modificationId, $propertyId)
     {
         $sql    = new Sql($this->dbAdapter);
         $select = $sql->select('subproduct_params_values');
@@ -290,5 +295,33 @@ class ZendDbSqlMapper implements
         }
 
         throw new \InvalidArgumentException("Property value not found.");
+    }
+
+    /**
+     * @param $id
+     * @return array|HydratingResultSet
+     */
+    public function fetchModificationPropertyValues($id)
+    {
+        $sql = new Sql($this->dbAdapter);
+        $select = $sql->select('subproduct_params_values');
+        $select
+            ->join('subproduct_params', 'subproduct_params_values.param_id = subproduct_params.id')
+            ->where([
+                'subproduct_id = ?' => $id
+            ])
+            ->order('subproduct_params.order ASC');
+
+        $stmt   = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+
+        if ($result instanceof ResultInterface && $result->isQueryResult()) {
+            $resultSet = new HydratingResultSet($this->hydrator, $this->modificationPropertyValuePrototype);
+            $resultSet->initialize($result);
+
+            return $resultSet;
+        }
+
+        return array();
     }
 }
