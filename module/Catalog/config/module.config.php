@@ -2,11 +2,13 @@
 namespace Catalog;
 
 use Catalog\Factory\IndexControllerFactory;
+use Catalog\Factory\ProductsControllerFactory;
 
 return array(
     'controllers' => array(
         'factories' => array(
             'Catalog\Controller\Index' => IndexControllerFactory::class,
+            'Catalog\Controller\Products' => ProductsControllerFactory::class,
         )
     ),
     'router' => array(
@@ -61,14 +63,27 @@ return array(
                     'product' => array(
                         'type' => 'segment',
                         'options' => array(
-                            'route'    => '/product[/:id]',
+                            'route'    => '/product',
                             'defaults' => array(
-                                'action' => 'product'
+                                'controller' => 'Catalog\Controller\Products',
+                                'action'     => 'index',
                             ),
-                            'constraints' => array(
-                                'id' => '[0-9]\d*'
-                            )
-                        )
+                        ),
+                        'may_terminate' => true,
+                        'child_routes' => array(
+                            'view' => array(
+                                'type' => 'segment',
+                                'options' => array(
+                                    'route'    => '/:id',
+                                    'defaults' => array(
+                                        'action' => 'view'
+                                    ),
+                                    'constraints' => array(
+                                        'id' => '[0-9]\d*'
+                                    )
+                                )
+                            ),
+                        ),
                     ),
                     'pdf' => array(
                         'type' => 'segment',

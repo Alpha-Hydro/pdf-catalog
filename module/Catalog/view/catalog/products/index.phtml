@@ -1,0 +1,8 @@
+<?php foreach ($this->products as $product): ?>
+    <article>
+        <h3 id="product<?= $product->getId() ?>"><?= $product->getSku() ?></h3>
+        <p>
+            <a href="<?= $this->url('catalog/product/view', array('id' => $product->getId())) ?>"><?= $product->getName() ?></a>
+        </p>
+    </article>
+<?php endforeach; ?>
