@@ -27,4 +27,9 @@ interface ModificationPropertyValueMapperInterface
      * @return array | ModificationPropertyValueInterface[]
      */
     public function fetchModificationPropertyValues($id);
+
+    /**
+     * @return array | ModificationPropertyValueInterface[]
+     */
+    public function fetchAllModificationPropertyValues();
 }

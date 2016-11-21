@@ -244,6 +244,29 @@ class ZendDbSqlMapper implements
         return array();
     }
 
+    public function fetchAllModifications()
+    {
+        $sql = new Sql($this->dbAdapter);
+        $select = $sql->select('subproducts');
+        $select
+            ->where([
+                'deleted != ?' => 1
+            ])
+            ->order('order ASC');
+
+        $stmt   = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+
+        if ($result instanceof ResultInterface && $result->isQueryResult()) {
+            $resultSet = new HydratingResultSet($this->hydrator, $this->modificationPrototype);
+            $resultSet->initialize($result);
+
+            return $resultSet;
+        }
+
+        return array();
+    }
+
     /**
      * @param $id
      * @return array|HydratingResultSet
@@ -257,6 +280,28 @@ class ZendDbSqlMapper implements
                 'product_id = ?' => $id
             ])
             ->order('order ASC');
+
+        $stmt   = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+
+        if ($result instanceof ResultInterface && $result->isQueryResult()) {
+            $resultSet = new HydratingResultSet($this->hydrator, $this->modificationPropertyPrototype);
+            $resultSet->initialize($result);
+
+            return $resultSet;
+        }
+
+        return array();
+    }
+
+    /**
+     * @return array|HydratingResultSet
+     */
+    public function fetchAllModificationProperties()
+    {
+        $sql = new Sql($this->dbAdapter);
+        $select = $sql->select('subproduct_params');
+        $select->order('order ASC');
 
         $stmt   = $sql->prepareStatementForSqlObject($select);
         $result = $stmt->execute();
@@ -311,6 +356,29 @@ class ZendDbSqlMapper implements
                 'subproduct_id = ?' => $id
             ])
             ->order('subproduct_params.order ASC');
+
+        $stmt   = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+
+        if ($result instanceof ResultInterface && $result->isQueryResult()) {
+            $resultSet = new HydratingResultSet($this->hydrator, $this->modificationPropertyValuePrototype);
+            $resultSet->initialize($result);
+
+            return $resultSet;
+        }
+
+        return array();
+    }
+
+    public function fetchAllModificationPropertyValues()
+    {
+        $sql = new Sql($this->dbAdapter);
+        $select = $sql->select('subproduct_params_values');
+        $select
+            ->join('subproduct_params', 'subproduct_params_values.param_id = subproduct_params.id')
+            //->limit(100)
+            ->order('subproduct_params.order ASC')
+        ;
 
         $stmt   = $sql->prepareStatementForSqlObject($select);
         $result = $stmt->execute();

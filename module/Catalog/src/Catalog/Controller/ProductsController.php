@@ -4,6 +4,7 @@ namespace Catalog\Controller;
 
 use Catalog\Model\ModificationInterface;
 use Catalog\Service\ProductServiceInterface;
+use Zend\Debug\Debug;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -22,9 +23,10 @@ class ProductsController extends AbstractActionController
 
     public function indexAction()
     {
-        return new ViewModel([
+        Debug::dump($this->productService->fetchAllProductsIsArray());die();
+        /*return new ViewModel([
             'products' => $this->productService->fetchAll()
-        ]);
+        ]);*/
     }
 
     public function viewAction()

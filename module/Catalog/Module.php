@@ -17,6 +17,7 @@ use Catalog\Service\CategoryServiceInterface;
 use Catalog\Service\ProductServiceInterface;
 use Catalog\Service\PdfService;
 
+use Zend\Cache\StorageFactory;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Adapter\AdapterServiceFactory;
 
@@ -42,7 +43,9 @@ class Module
     {
         return [
             'abstract_factories' => [],
-            'aliases' => [],
+            'aliases' => [
+                'cache' => StorageFactory::class,
+            ],
             'factories' => [
                 CategoryMapperInterface::class => ZendDbSqlMapperFactory::class,
                 ProductMapperInterface::class => ZendDbSqlMapperFactory::class,
@@ -54,6 +57,21 @@ class Module
                 ProductServiceInterface::class => ProductServiceFactory::class,
                 PdfService::class => PdfServiceFactory::class,
                 Adapter::class => AdapterServiceFactory::class,
+                StorageFactory::class => function() {
+                    return StorageFactory::factory([
+                        'adapter' => [
+                            'name' => 'filesystem',
+                            'options' => [
+                                'cache_dir' => __DIR__ . '/../../data/cache'
+                            ],
+                        ],
+                        'plugins' => [
+                            'exception_handler' => [
+                                'throw_exceptions' => false
+                            ],
+                        ]
+                    ]);
+                }
             ],
             'invokables' => [],
             'services' => [],

@@ -17,4 +17,14 @@ interface ModificationPropertyValueInterface
      */
     public function getValue();
 
+    /**
+     * @return int
+     */
+    public function getSubproductId();
+
+    /**
+     * @return int
+     */
+    public function getProductId();
+
 }

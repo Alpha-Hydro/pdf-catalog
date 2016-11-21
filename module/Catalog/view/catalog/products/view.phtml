@@ -3,15 +3,26 @@
     <p>
         <a href="http://alpha-hydro.loc/catalog/<?= $this->product->getFullPath() ?>" target="_blank"><?= $this->product->getFullPath() ?></a>
     </p>
-    <h4>Свойства</h4>
-    <table class="table table-striped table-condensed product-property">
-        <?php foreach ($this->productParams as $param):?>
-            <tr>
-                <td><?= $param->getName() ?></td>
-                <td><?= $param->getValue() ?></td>
-            </tr>
-        <?php endforeach;?>
-    </table>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="http://alpha-hydro.loc<?=$this->product->getUploadPath() . $this->product->getImage()?>" alt="..." class="img-thumbnail">
+            </div>
+            <div class="col-md-8">
+                <h4>Свойства</h4>
+                <table class="table table-striped table-condensed product-property">
+                    <?php foreach ($this->productParams as $param):?>
+                        <tr>
+                            <td><?= $param->getName() ?></td>
+                            <td><?= $param->getValue() ?></td>
+                        </tr>
+                    <?php endforeach;?>
+                </table>
+            </div>
+        </div>
+    </div>
+
 
     <h4>Модификации</h4>
     <table class="table table-striped table-condensed product-property">

@@ -19,4 +19,9 @@ interface ModificationPropertyMapperInterface
      * @return array | ModificationPropertyInterface[]
      */
     public function fetchModificationPropertiesByProduct($id);
+
+    /**
+     * @return array | ModificationPropertyInterface[]
+     */
+    public function fetchAllModificationProperties();
 }

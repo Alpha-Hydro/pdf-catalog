@@ -18,6 +18,16 @@ class ModificationPropertyValue implements ModificationPropertyValueInterface
     protected $value;
 
     /**
+     * @var int
+     */
+    protected $subproductId;
+
+    /**
+     * @var int
+     */
+    protected $productId;
+
+    /**
      * @return string
      */
     public function getValue()
@@ -31,5 +41,37 @@ class ModificationPropertyValue implements ModificationPropertyValueInterface
     public function setValue($value)
     {
         $this->value = $value;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSubproductId()
+    {
+        return $this->subproductId;
+    }
+
+    /**
+     * @param int $subproductId
+     */
+    public function setSubproductId($subproductId)
+    {
+        $this->subproductId = $subproductId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getProductId()
+    {
+        return $this->productId;
+    }
+
+    /**
+     * @param int $productId
+     */
+    public function setProductId($productId)
+    {
+        $this->productId = $productId;
     }
 }
