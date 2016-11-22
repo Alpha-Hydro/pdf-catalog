@@ -28,6 +28,7 @@ class ZendDbSqlMapperFactory implements FactoryInterface
     {
         return new ZendDbSqlMapper(
             $serviceLocator->get(Adapter::class),
+            $serviceLocator->get('cache'),
             new ClassMethods(),// new ClassMethods(false),
             new Category(),
             new Product(),

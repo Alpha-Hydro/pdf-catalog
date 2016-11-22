@@ -29,7 +29,7 @@ interface ModificationPropertyValueMapperInterface
     public function fetchModificationPropertyValues($id);
 
     /**
-     * @return array | ModificationPropertyValueInterface[]
+     * @return array
      */
     public function fetchAllModificationPropertyValues();
 }

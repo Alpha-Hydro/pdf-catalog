@@ -16,6 +16,7 @@ use Catalog\Model\ModificationPropertyValueInterface;
 use Catalog\Model\ProductInterface;
 use Catalog\Model\ProductParamsInterface;
 
+use Zend\Cache\Storage\Adapter\Filesystem;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
@@ -34,6 +35,11 @@ class ZendDbSqlMapper implements
      * @var AdapterInterface
      */
     protected $dbAdapter;
+
+    /**
+     * @var Filesystem
+     */
+    protected $cache;
 
     /**
      * @var HydratorInterface
@@ -76,6 +82,7 @@ class ZendDbSqlMapper implements
      */
     public function __construct(
         AdapterInterface $adapter,
+        Filesystem $cache,
         HydratorInterface $hydrator,
         CategoryInterface $categoryPrototype,
         ProductInterface $productPrototype,
@@ -86,6 +93,7 @@ class ZendDbSqlMapper implements
     )
     {
         $this->dbAdapter = $adapter;
+        $this->cache = $cache;
         $this->hydrator = $hydrator;
         $this->categoryPrototype = $categoryPrototype;
         $this->productPrototype = $productPrototype;
@@ -372,24 +380,33 @@ class ZendDbSqlMapper implements
 
     public function fetchAllModificationPropertyValues()
     {
-        $sql = new Sql($this->dbAdapter);
-        $select = $sql->select('subproduct_params_values');
-        $select
-            ->join('subproduct_params', 'subproduct_params_values.param_id = subproduct_params.id')
-            //->limit(100)
-            ->order('subproduct_params.order ASC')
-        ;
+        $keyCache = 'modificationPropertyValues';
 
-        $stmt   = $sql->prepareStatementForSqlObject($select);
-        $result = $stmt->execute();
+        $modificationPropertyValues = $this->cache->getItem($keyCache, $success);
 
-        if ($result instanceof ResultInterface && $result->isQueryResult()) {
-            $resultSet = new HydratingResultSet($this->hydrator, $this->modificationPropertyValuePrototype);
-            $resultSet->initialize($result);
+        if(!$success) {
+            $sql = new Sql($this->dbAdapter);
+            $select = $sql->select('subproduct_params_values');
+            $select
+                ->join('subproduct_params', 'subproduct_params_values.param_id = subproduct_params.id')
+                //->limit(10000)
+                ->order('subproduct_params.order ASC');
 
-            return $resultSet;
+            $stmt = $sql->prepareStatementForSqlObject($select);
+            $result = $stmt->execute();
+
+            if ($result instanceof ResultInterface && $result->isQueryResult()) {
+                $resultSet = new HydratingResultSet($this->hydrator, $this->modificationPropertyValuePrototype);
+                $resultSet->initialize($result);
+
+                $modificationPropertyValues = $resultSet->toArray();
+                $this->cache->setItem($keyCache, $modificationPropertyValues);
+            }
+            else{
+                $modificationPropertyValues = array();
+            }
         }
 
-        return array();
+        return $modificationPropertyValues;
     }
 }

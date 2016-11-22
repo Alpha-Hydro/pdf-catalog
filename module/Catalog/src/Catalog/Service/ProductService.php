@@ -126,8 +126,8 @@ class ProductService implements ProductServiceInterface
     {
 
 
-        /*$result = [];
-        $products = $this->fetchAll()->toArray();
+        $result = [];
+        /*$products = $this->fetchAll()->toArray();
         foreach ($products as $product){
             $productId = (int) $product['id'];
             $product['params'] = $this->fetchParamsByProduct($productId)->toArray();
@@ -138,12 +138,42 @@ class ProductService implements ProductServiceInterface
             $result[] = $product;
         }*/
 
-        $modifications = $this->modificationMapper->fetchAllModifications()->toArray();
-        $modificationProperties = $this->modificationPropertyMapper->fetchAllModificationProperties()->toArray();
-        $modificationPropertyValues = $this->modificationPropertyValueMapper->fetchAllModificationPropertyValues()->toArray();
+
+        /*$key = 'modifications';
+        $modifications = $this->cache->getItem($key, $success);
+        if(!$success){
+            $modifications = $this->modificationMapper->fetchAllModifications()->toArray();
+            $this->cache->setItem($key, $modifications);
+        }
+
+        $key = 'modificationProperties';
+        $modificationProperties = $this->cache->getItem($key, $success);
+        if(!$success){
+            $modificationProperties = $this->modificationPropertyMapper->fetchAllModificationProperties()->toArray();
+            $this->cache->setItem($key, $modificationProperties);
+        }*/
+
+        /*$key = 'modificationPropertyValues';
+        $modificationPropertyValues = $cache->getItem($key, $success);
+        if(!$success){
+            $modificationPropertyValues = $this->modificationPropertyValueMapper->fetchAllModificationPropertyValues()->toArray();
+            $cache->setItem($key, $modificationPropertyValues);
+        }*/
 
 
-        return $this->array_group_by($modificationPropertyValues, 'product_id', 'subproduct_id');
+        //Debug::dump($cache->getOptions()); die();
+        $modificationPropertyValues = $this->modificationPropertyValueMapper->fetchAllModificationPropertyValues();
+
+        return $modificationPropertyValues;
+    }
+
+    /**
+     * @return array
+     */
+    public function fetchAllModificationPropertyValues()
+    {
+        $array = $this->modificationPropertyValueMapper->fetchAllModificationPropertyValues();
+        return $this->arrayGroupByModificationPropertyValues($array, ['product_id', 'subproduct_id']);
     }
 
     private function modificationTableValues($modifications)
@@ -164,6 +194,27 @@ class ProductService implements ProductServiceInterface
 
 
         return $modificationsTableValues;
+    }
+
+    private function arrayGroupByModificationPropertyValues(&$array, $keys)
+    {
+        $result = [];
+
+        $k = 0;
+        $_key = $keys[$k];
+        foreach ($array as $value){
+            $key = $value[ $_key ];
+            unset($value[$_key]);
+            $result[$keys[$k].'_'.$key][] = $value;
+        }
+
+        if(count($keys) > 1){
+            array_shift($keys);
+            foreach ($result as $key => $value){
+                $result[$key] = $this->arrayGroupByModificationPropertyValues($value, $keys);
+            }
+        }
+        return $result;
     }
 
     private function array_group_by( array $array, $key )
@@ -193,7 +244,7 @@ class ProductService implements ProductServiceInterface
         if ( func_num_args() > 2 ) {
             $args = func_get_args();
             foreach ( $grouped as $key => $value ) {
-                $params = array_merge( [ $value ], array_slice( $args, 2, func_num_args() ) );
+                //$params = array_merge( [ $value ], array_slice( $args, 2, func_num_args() ) );
                 //$grouped[ $key ] = call_user_func_array( 'array_group_by', array($params) );
                 $grouped[ $key ] = $this->array_group_by($value, 'subproduct_id');
                 //$grouped[ $key ] = $params;

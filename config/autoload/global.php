@@ -35,6 +35,7 @@ return array(
                         'exception_handler' => array(
                             'throw_exceptions' => false
                         ),
+                        'Serializer'
                     )
                 ));
             },

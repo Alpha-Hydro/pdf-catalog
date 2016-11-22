@@ -7,6 +7,7 @@ use Catalog\Service\ProductServiceInterface;
 use Zend\Debug\Debug;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 
 class ProductsController extends AbstractActionController
 {
@@ -23,7 +24,7 @@ class ProductsController extends AbstractActionController
 
     public function indexAction()
     {
-        Debug::dump($this->productService->fetchAllProductsIsArray());die();
+        Debug::dump($this->productService->fetchAllModificationPropertyValues());die();
         /*return new ViewModel([
             'products' => $this->productService->fetchAll()
         ]);*/

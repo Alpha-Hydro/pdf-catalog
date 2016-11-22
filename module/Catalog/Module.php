@@ -43,9 +43,7 @@ class Module
     {
         return [
             'abstract_factories' => [],
-            'aliases' => [
-                'cache' => StorageFactory::class,
-            ],
+            'aliases' => [],
             'factories' => [
                 CategoryMapperInterface::class => ZendDbSqlMapperFactory::class,
                 ProductMapperInterface::class => ZendDbSqlMapperFactory::class,
@@ -56,22 +54,7 @@ class Module
                 CategoryServiceInterface::class => CategoryServiceFactory::class,
                 ProductServiceInterface::class => ProductServiceFactory::class,
                 PdfService::class => PdfServiceFactory::class,
-                Adapter::class => AdapterServiceFactory::class,
-                StorageFactory::class => function() {
-                    return StorageFactory::factory([
-                        'adapter' => [
-                            'name' => 'filesystem',
-                            'options' => [
-                                'cache_dir' => __DIR__ . '/../../data/cache'
-                            ],
-                        ],
-                        'plugins' => [
-                            'exception_handler' => [
-                                'throw_exceptions' => false
-                            ],
-                        ]
-                    ]);
-                }
+                Adapter::class => AdapterServiceFactory::class
             ],
             'invokables' => [],
             'services' => [],

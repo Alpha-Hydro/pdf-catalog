@@ -59,5 +59,10 @@ interface ProductServiceInterface
      */
     public function fetchModificationPropertyValues($id);
 
+    /**
+     * @return array
+     */
+    public function fetchAllModificationPropertyValues();
+
     public function fetchAllProductsIsArray();
 }
