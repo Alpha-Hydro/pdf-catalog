@@ -8,6 +8,7 @@ use Zend\Debug\Debug;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
+use Zend\View\Model\FeedModel;
 
 class ProductsController extends AbstractActionController
 {
@@ -24,9 +25,13 @@ class ProductsController extends AbstractActionController
 
     public function indexAction()
     {
-        Debug::dump($this->productService->fetchAllModificationPropertyValues());die();
+        Debug::dump($this->productService->fetchAllProductModificationPapamValues());die();
         /*return new ViewModel([
             'products' => $this->productService->fetchAll()
+        ]);*/
+
+        /*return new JsonModel([
+            'root' => $this->productService->fetchAllModificationPropertyValues()
         ]);*/
     }
 

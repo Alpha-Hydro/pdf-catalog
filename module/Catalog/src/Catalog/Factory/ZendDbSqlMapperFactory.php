@@ -16,6 +16,7 @@ use Catalog\Model\ProductParams;
 use Catalog\Model\Modification;
 use Catalog\Model\ModificationProperty;
 use Catalog\Model\ModificationPropertyValue;
+use Catalog\Model\ProductModificationParamValues;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\ServiceManager\FactoryInterface;
@@ -35,7 +36,8 @@ class ZendDbSqlMapperFactory implements FactoryInterface
             new ProductParams(),
             new Modification(),
             new ModificationProperty(),
-            new ModificationPropertyValue()
+            new ModificationPropertyValue(),
+            new ProductModificationParamValues()
         );
     }
 }

@@ -14,6 +14,7 @@ use Catalog\Mapper\ModificationMapperInterface;
 use Catalog\Mapper\ModificationPropertyMapperInterface;
 use Catalog\Mapper\ModificationPropertyValueMapperInterface;
 use Catalog\Mapper\ProductMapperInterface;
+use Catalog\Mapper\ProductModificationParamValuesMapperInterface;
 use Catalog\Mapper\ProductParamsMapperInterface;
 use Catalog\Model\ModificationPropertyValueInterface;
 
@@ -44,12 +45,19 @@ class ProductService implements ProductServiceInterface
      */
     protected $modificationPropertyValueMapper;
 
+
+    /**
+     * @var ProductModificationParamValuesMapperInterface
+     */
+    protected $productModificationParamValuesMapper;
+
     public function __construct(
         ProductMapperInterface $productMapper,
         ProductParamsMapperInterface $productParamsMapper,
         ModificationMapperInterface $modificationMapper,
         ModificationPropertyMapperInterface $modificationPropertyMapper,
-        ModificationPropertyValueMapperInterface $modificationPropertyValueMapper
+        ModificationPropertyValueMapperInterface $modificationPropertyValueMapper,
+        ProductModificationParamValuesMapperInterface $modificationParamValuesMapper
     )
     {
         $this->productMapper = $productMapper;
@@ -57,6 +65,7 @@ class ProductService implements ProductServiceInterface
         $this->modificationMapper = $modificationMapper;
         $this->modificationPropertyMapper = $modificationPropertyMapper;
         $this->modificationPropertyValueMapper = $modificationPropertyValueMapper;
+        $this->productModificationParamValuesMapper = $modificationParamValuesMapper;
     }
 
     /**
@@ -174,6 +183,11 @@ class ProductService implements ProductServiceInterface
     {
         $array = $this->modificationPropertyValueMapper->fetchAllModificationPropertyValues();
         return $this->arrayGroupByModificationPropertyValues($array, ['product_id', 'subproduct_id']);
+    }
+
+    public function fetchAllProductModificationPapamValues()
+    {
+        return $this->productModificationParamValuesMapper->fetchAllProductModificationParamValues();
     }
 
     private function modificationTableValues($modifications)

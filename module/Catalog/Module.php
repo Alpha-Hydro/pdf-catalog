@@ -11,6 +11,7 @@ use Catalog\Mapper\ModificationMapperInterface;
 use Catalog\Mapper\ModificationPropertyMapperInterface;
 use Catalog\Mapper\ModificationPropertyValueMapperInterface;
 use Catalog\Mapper\ProductMapperInterface;
+use Catalog\Mapper\ProductModificationParamValuesMapperInterface;
 use Catalog\Mapper\ProductParamsMapperInterface;
 
 use Catalog\Service\CategoryServiceInterface;
@@ -48,6 +49,7 @@ class Module
                 CategoryMapperInterface::class => ZendDbSqlMapperFactory::class,
                 ProductMapperInterface::class => ZendDbSqlMapperFactory::class,
                 ProductParamsMapperInterface::class => ZendDbSqlMapperFactory::class,
+                ProductModificationParamValuesMapperInterface::class => ZendDbSqlMapperFactory::class,
                 ModificationMapperInterface::class => ZendDbSqlMapperFactory::class,
                 ModificationPropertyMapperInterface::class => ZendDbSqlMapperFactory::class,
                 ModificationPropertyValueMapperInterface::class => ZendDbSqlMapperFactory::class,

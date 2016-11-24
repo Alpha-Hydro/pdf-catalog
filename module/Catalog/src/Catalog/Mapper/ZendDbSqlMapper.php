@@ -14,6 +14,7 @@ use Catalog\Model\ModificationInterface;
 use Catalog\Model\ModificationPropertyInterface;
 use Catalog\Model\ModificationPropertyValueInterface;
 use Catalog\Model\ProductInterface;
+use Catalog\Model\ProductModificationParamValues;
 use Catalog\Model\ProductParamsInterface;
 
 use Zend\Cache\Storage\Adapter\Filesystem;
@@ -29,7 +30,8 @@ class ZendDbSqlMapper implements
     ProductParamsMapperInterface,
     ModificationMapperInterface,
     ModificationPropertyMapperInterface,
-    ModificationPropertyValueMapperInterface
+    ModificationPropertyValueMapperInterface,
+    ProductModificationParamValuesMapperInterface
 {
     /**
      * @var AdapterInterface
@@ -77,6 +79,12 @@ class ZendDbSqlMapper implements
     protected $modificationPropertyValuePrototype;
 
     /**
+     * @var ModificationPropertyValueInterface
+     */
+    protected $productModificationParamValuesPrototype;
+
+
+    /**
      * ZendDbSqlMapper constructor.
      * @param AdapterInterface $adapter
      */
@@ -89,7 +97,8 @@ class ZendDbSqlMapper implements
         ProductParamsInterface $productParamsPrototype,
         ModificationInterface $modificationPrototype,
         ModificationPropertyInterface $modificationPropertyPrototype,
-        ModificationPropertyValueInterface $modificationPropertyValuePrototype
+        ModificationPropertyValueInterface $modificationPropertyValuePrototype,
+        ProductModificationParamValues $productModificationParamValuesPrototype
     )
     {
         $this->dbAdapter = $adapter;
@@ -101,6 +110,7 @@ class ZendDbSqlMapper implements
         $this->modificationPrototype = $modificationPrototype;
         $this->modificationPropertyPrototype = $modificationPropertyPrototype;
         $this->modificationPropertyValuePrototype = $modificationPropertyValuePrototype;
+        $this->productModificationParamValuesPrototype = $productModificationParamValuesPrototype;
     }
 
     /**
@@ -408,5 +418,50 @@ class ZendDbSqlMapper implements
         }
 
         return $modificationPropertyValues;
+    }
+
+    public function fetchAllProductModificationParamValues()
+    {
+        $keyCache = 'productModificationParamValues';
+
+        $productModificationParamValues = $this->cache->getItem($keyCache, $success);
+
+        if(!$success) {
+            $sql = new Sql($this->dbAdapter);
+            $select = $sql->select('products');
+            $select
+                ->columns(['productId' => 'id'])
+                ->join('subproduct_params', 'products.id = subproduct_params.product_id', ['paramName' => 'name'])
+                ->join('subproduct_params_values', 'subproduct_params.id = subproduct_params_values.param_id', ['paramValue' => 'value'])
+                ->join('subproducts', 'subproduct_params_values.subproduct_id = subproducts.id', ['modificationName' => 'sku'])
+                /*->columns([
+                    'products.id' => 'productId',
+                    'subproducts.sku' => 'modificationName',
+                    'subproduct_params.name' => 'paramName',
+                    'subproduct_params_values.value' => 'paramValue'
+                ])*/
+                ->where([
+                    'products.deleted != ?' => 1,
+                    'products.active != ?' => 0
+                ])
+                ->limit(100)
+                ->order('subproduct_params.order ASC');
+
+            $stmt = $sql->prepareStatementForSqlObject($select);
+            $result = $stmt->execute();
+
+            if ($result instanceof ResultInterface && $result->isQueryResult()) {
+                $resultSet = new HydratingResultSet($this->hydrator, $this->productModificationParamValuesPrototype);
+                $resultSet->initialize($result);
+
+                $productModificationParamValues = $resultSet->toArray();
+                $this->cache->setItem($keyCache, $productModificationParamValues);
+            }
+            else{
+                $productModificationParamValues = array();
+            }
+        }
+
+        return $productModificationParamValues;
     }
 }

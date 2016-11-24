@@ -64,5 +64,10 @@ interface ProductServiceInterface
      */
     public function fetchAllModificationPropertyValues();
 
+    /**
+     * @return array
+     */
+    public function fetchAllProductModificationPapamValues();
+
     public function fetchAllProductsIsArray();
 }
