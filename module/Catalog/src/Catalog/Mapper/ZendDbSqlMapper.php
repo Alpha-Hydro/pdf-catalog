@@ -434,17 +434,11 @@ class ZendDbSqlMapper implements
                 ->join('subproduct_params', 'products.id = subproduct_params.product_id', ['paramName' => 'name'])
                 ->join('subproduct_params_values', 'subproduct_params.id = subproduct_params_values.param_id', ['paramValue' => 'value'])
                 ->join('subproducts', 'subproduct_params_values.subproduct_id = subproducts.id', ['modificationName' => 'sku'])
-                /*->columns([
-                    'products.id' => 'productId',
-                    'subproducts.sku' => 'modificationName',
-                    'subproduct_params.name' => 'paramName',
-                    'subproduct_params_values.value' => 'paramValue'
-                ])*/
                 ->where([
                     'products.deleted != ?' => 1,
                     'products.active != ?' => 0
                 ])
-                ->limit(100)
+                //->limit(100)
                 ->order('subproduct_params.order ASC');
 
             $stmt = $sql->prepareStatementForSqlObject($select);

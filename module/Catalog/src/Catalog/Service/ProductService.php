@@ -181,36 +181,54 @@ class ProductService implements ProductServiceInterface
      */
     public function fetchAllModificationPropertyValues()
     {
-        $array = $this->modificationPropertyValueMapper->fetchAllModificationPropertyValues();
-        return $this->arrayGroupByModificationPropertyValues($array, ['product_id', 'subproduct_id']);
+        return $this->modificationPropertyValueMapper->fetchAllModificationPropertyValues();
     }
 
     public function fetchAllProductModificationPapamValues()
     {
-        return $this->productModificationParamValuesMapper->fetchAllProductModificationParamValues();
+        $array = $this->productModificationParamValuesMapper->fetchAllProductModificationParamValues();
+        return $this->modificationTableValues($array);
     }
 
-    private function modificationTableValues($modifications)
+
+    /**
+     * @param $array
+     * @return array
+     */
+    private function arrayGroupByModificationPropertyValues(&$array)
     {
-        $modificationsTableValues = array();
-        $modificationsArray = $modifications->toArray();
-        if(!empty($modificationsArray))
-            foreach ($modificationsArray as $modification){
-                $values = array();
-                $values[] = $modification["sku"];
-                $modificationPropertyValues = $this->fetchModificationPropertyValues($modification['id']);
-                foreach ($modificationPropertyValues->toArray() as $modificationPropertyValue){
-                    $values[] = $modificationPropertyValue['value'];
+        $result = [];
+        $products = $this->arrayGroupBy($array, ['product_id', 'modification_name']);
+        foreach ($products as $k => $modifications){
+            foreach ($modifications as $n => $params){
+                foreach ($params as $value){
+                    $result[$k][$n][$value['param_name']] = $value['param_value'];
                 }
-
-                $modificationsTableValues[] = $values;
             }
+        }
 
-
-        return $modificationsTableValues;
+        return $result;
     }
 
-    private function arrayGroupByModificationPropertyValues(&$array, $keys)
+    private function modificationTableValues(&$array)
+    {
+        $result = [];
+        $products = $this->arrayGroupBy($array, ['product_id']);
+
+        foreach ($products as $id => $product){
+            $result[$id]['columns'][] = 'Название';
+
+        }
+
+        return $products;
+    }
+
+    /**
+     * @param $array
+     * @param array $keys
+     * @return array
+     */
+    private function arrayGroupBy(&$array, $keys)
     {
         $result = [];
 
@@ -219,51 +237,16 @@ class ProductService implements ProductServiceInterface
         foreach ($array as $value){
             $key = $value[ $_key ];
             unset($value[$_key]);
-            $result[$keys[$k].'_'.$key][] = $value;
+            $result[$key][] = $value;
         }
 
         if(count($keys) > 1){
             array_shift($keys);
             foreach ($result as $key => $value){
-                $result[$key] = $this->arrayGroupByModificationPropertyValues($value, $keys);
+                $result[$key] = $this->arrayGroupBy($value, $keys);
             }
         }
         return $result;
     }
 
-    private function array_group_by( array $array, $key )
-    {
-        if ( ! is_string( $key ) && ! is_int( $key ) && ! is_float( $key ) && ! is_callable( $key ) ) {
-            trigger_error( 'array_group_by(): The key should be a string, an integer, or a callback', E_USER_ERROR );
-            return null;
-        }
-        $func = ( is_callable( $key ) ? $key : null );
-        $_key = $key;
-        // Load the new array, splitting by the target key
-        $grouped = [];
-        foreach ( $array as $value ) {
-            if ( is_callable( $func ) ) {
-                $key = call_user_func( $func, $value );
-            } elseif ( is_object( $value ) && isset( $value->{ $_key } ) ) {
-                $key = $value->{ $_key };
-            } elseif ( isset( $value[ $_key ] ) ) {
-                $key = $value[ $_key ];
-            } else {
-                continue;
-            }
-            $grouped[ $key ][] = $value;
-        }
-        // Recursively build a nested grouping if more parameters are supplied
-        // Each grouped array value is grouped according to the next sequential key
-        if ( func_num_args() > 2 ) {
-            $args = func_get_args();
-            foreach ( $grouped as $key => $value ) {
-                //$params = array_merge( [ $value ], array_slice( $args, 2, func_num_args() ) );
-                //$grouped[ $key ] = call_user_func_array( 'array_group_by', array($params) );
-                $grouped[ $key ] = $this->array_group_by($value, 'subproduct_id');
-                //$grouped[ $key ] = $params;
-            }
-        }
-        return $grouped;
-    }
 }
