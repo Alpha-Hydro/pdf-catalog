@@ -160,6 +160,7 @@ class ZendDbSqlMapper implements
         throw new \InvalidArgumentException("Category with given ID:{$id} not found.");
     }
 
+
     /**
      * @return array|HydratingResultSet
      */
@@ -173,6 +174,33 @@ class ZendDbSqlMapper implements
                 'active != ?' => 0,
             ])
             ->join('categories_xref', 'products.id = categories_xref.product_id')
+            ->order('sorting ASC');
+
+        $stmt   = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+
+        if ($result instanceof ResultInterface && $result->isQueryResult()) {
+            $resultSet = new HydratingResultSet($this->hydrator, $this->productPrototype);
+            $resultSet->initialize($result);
+
+            return $resultSet;
+        }
+
+        return array();
+    }
+
+
+    public function fetchProductsByCategory($category_id)
+    {
+        $sql = new Sql($this->dbAdapter);
+        $select = $sql->select('products');
+        $select
+            ->join('categories_xref', 'products.id = categories_xref.product_id')
+            ->where([
+                'category_id = ?' => $category_id,
+                'deleted != ?' => 1,
+                'active != ?' => 0,
+            ])
             ->order('sorting ASC');
 
         $stmt   = $sql->prepareStatementForSqlObject($select);

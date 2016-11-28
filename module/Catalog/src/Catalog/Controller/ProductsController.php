@@ -25,7 +25,6 @@ class ProductsController extends AbstractActionController
 
     public function indexAction()
     {
-        //Debug::dump($this->productService->fetchAllProductParams());die();
 
         return new ViewModel([
             'products' => $this->productService->fetchAll(),
@@ -42,11 +41,12 @@ class ProductsController extends AbstractActionController
     {
         $id = $this->params()->fromRoute('id');
         if($id){
+            Debug::dump($this->productService->fetchProductsByCategory($id)->toArray()); die();
             //Debug::dump($this->productService->find($id));
             //Debug::dump($this->productService->fetchParamsByProduct($id));
         }
 
-        $modifications = $this->productService->fetchModificationsByProduct($id);
+        /*$modifications = $this->productService->fetchModificationsByProduct($id);
         //Debug::dump($this->modificationTableValues($modifications));
 
         return new ViewModel([
@@ -55,7 +55,7 @@ class ProductsController extends AbstractActionController
             'modifications' => $this->productService->fetchModificationsByProduct($id),
             'modificationsProperty' => $this->productService->fetchModificationPropertyByProduct($id),
             'modificationsTable' => $this->modificationTableValues($modifications)
-        ]);
+        ]);*/
     }
 
     /**

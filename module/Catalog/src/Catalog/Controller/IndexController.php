@@ -8,6 +8,7 @@ use Catalog\Service\PdfService;
 use Catalog\Service\ProductServiceInterface;
 use Zend\Debug\Debug;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\RendererInterface;
 
@@ -78,14 +79,14 @@ class IndexController extends AbstractActionController
     {
         $id = ($this->params()->fromRoute('id'))?$this->params()->fromRoute('id'):0;
 
-        /*return new JsonModel(
+        return new JsonModel(
             $this->categoryService->findTreeByParentId($id)
-        );*/
+        );
 
-        return new ViewModel([
+        /*return new ViewModel([
             'category' => ($id != 0)?$this->categoryService->find($id):null,
             'subCategories' => $this->categoryService->findTreeByParentId($id)
-        ]);
+        ]);*/
     }
 
     public function pdfAction()
@@ -94,7 +95,7 @@ class IndexController extends AbstractActionController
         $pdf->defaultSettingsPage();
 
 
-        /*//Введение
+        //Введение
         $view = new ViewModel();
         $view->setTemplate('partial/pdf/introduction');
         $html = $this->renderer->render($view);
@@ -107,7 +108,7 @@ class IndexController extends AbstractActionController
         ]);
         $view->setTemplate('partial/pdf/table-of-content');
         $html = $this->renderer->render($view);
-        $pdf->tableOfContent($html);*/
+        $pdf->tableOfContent($html);
 
         //Product
         $id = '27816';

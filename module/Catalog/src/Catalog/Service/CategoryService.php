@@ -49,7 +49,13 @@ class CategoryService implements CategoryServiceInterface
         return $resultTree;
     }
 
-    protected function _tree_recurse( &$array, $parent, $level = 1)
+    /**
+     * @param $array
+     * @param $parent array
+     * @param int $level
+     * @return array
+     */
+    protected function _tree_recurse(&$array, $parent, $level = 1)
     {
         $tree = array();
 

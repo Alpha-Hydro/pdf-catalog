@@ -76,6 +76,15 @@ class ProductService implements ProductServiceInterface
     }
 
     /**
+     * @param $category_id
+     * @return array|\Catalog\Model\ProductInterface[]
+     */
+    public function fetchProductsByCategory($category_id)
+    {
+        return $this->productMapper->fetchProductsByCategory($category_id);
+    }
+
+    /**
      * @param int $id
      * @return \Catalog\Model\ProductInterface
      */

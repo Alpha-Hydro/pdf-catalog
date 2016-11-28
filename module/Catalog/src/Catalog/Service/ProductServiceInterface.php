@@ -22,6 +22,13 @@ interface ProductServiceInterface
      */
     public function fetchAll();
 
+
+    /**
+     * @param $category_id
+     * @return array|ProductInterface[]
+     */
+    public function fetchProductsByCategory($category_id);
+
     /**
      * @param $id int
      * @return ProductInterface

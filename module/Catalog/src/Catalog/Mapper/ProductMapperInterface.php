@@ -25,4 +25,10 @@ interface ProductMapperInterface
      * @return array | ProductInterface[]
      */
     public function fetchAllProducts();
+
+    /**
+     * @param $category_id
+     * @return array | ProductInterface[]
+     */
+    public function fetchProductsByCategory($category_id);
 }
