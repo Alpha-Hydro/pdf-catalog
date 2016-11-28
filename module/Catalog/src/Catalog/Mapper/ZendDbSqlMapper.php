@@ -234,6 +234,35 @@ class ZendDbSqlMapper implements
         return array();
     }
 
+    public function fetchAllProductParams()
+    {
+        $keyCache = 'productParams';
+
+        $productParams = $this->cache->getItem($keyCache, $success);
+
+        if(!$success) {
+            $sql = new Sql($this->dbAdapter);
+            $select = $sql->select('product_params');
+            $select->order('order ASC');
+
+            $stmt   = $sql->prepareStatementForSqlObject($select);
+            $result = $stmt->execute();
+
+            if ($result instanceof ResultInterface && $result->isQueryResult()) {
+                $resultSet = new HydratingResultSet($this->hydrator, $this->productParamsPrototype);
+                $resultSet->initialize($result);
+
+                $productParams = $resultSet->toArray();
+                $this->cache->setItem($keyCache, $productParams);
+            }
+            else{
+                $productParams = [];
+            }
+        }
+
+        return $productParams;
+    }
+
     /**
      * @param $id
      * @return array|HydratingResultSet
@@ -262,6 +291,9 @@ class ZendDbSqlMapper implements
         return array();
     }
 
+    /**
+     * @return array|HydratingResultSet
+     */
     public function fetchAllModifications()
     {
         $sql = new Sql($this->dbAdapter);
@@ -388,6 +420,9 @@ class ZendDbSqlMapper implements
         return array();
     }
 
+    /**
+     * @return array
+     */
     public function fetchAllModificationPropertyValues()
     {
         $keyCache = 'modificationPropertyValues';
@@ -420,6 +455,9 @@ class ZendDbSqlMapper implements
         return $modificationPropertyValues;
     }
 
+    /**
+     * @return array
+     */
     public function fetchAllProductModificationParamValues()
     {
         $keyCache = 'productModificationParamValues';

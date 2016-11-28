@@ -15,11 +15,6 @@ class ProductParams implements ProductParamsInterface
     /**
      * @var int
      */
-    protected $id;
-
-    /**
-     * @var int
-     */
     protected $productId;
 
     /**
@@ -31,27 +26,6 @@ class ProductParams implements ProductParamsInterface
      * @var string
      */
     protected $value;
-
-    /**
-     * @var int
-     */
-    protected $order;
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
 
     /**
      * @return int
@@ -99,22 +73,6 @@ class ProductParams implements ProductParamsInterface
     public function setValue($value)
     {
         $this->value = $value;
-    }
-
-    /**
-     * @return int
-     */
-    public function getOrder()
-    {
-        return $this->order;
-    }
-
-    /**
-     * @param int $order
-     */
-    public function setOrder($order)
-    {
-        $this->order = $order;
     }
 
 }

@@ -15,11 +15,6 @@ interface ProductParamsInterface
     /**
      * @return int
      */
-    public function getId();
-
-    /**
-     * @return int
-     */
     public function getProductId();
 
     /**
@@ -31,10 +26,5 @@ interface ProductParamsInterface
      * @return string
      */
     public function getValue();
-
-    /**
-     * @return int
-     */
-    public function getOrder();
 
 }

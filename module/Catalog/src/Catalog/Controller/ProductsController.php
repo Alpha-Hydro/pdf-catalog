@@ -25,10 +25,13 @@ class ProductsController extends AbstractActionController
 
     public function indexAction()
     {
-        Debug::dump($this->productService->fetchAllProductModificationPapamValues());die();
-        /*return new ViewModel([
-            'products' => $this->productService->fetchAll()
-        ]);*/
+        //Debug::dump($this->productService->fetchAllProductParams());die();
+
+        return new ViewModel([
+            'products' => $this->productService->fetchAll(),
+            'productParams' => $this->productService->fetchAllProductParams(),
+            'productModificationsTable' => $this->productService->fetchAllProductModificationParamValues()
+        ]);
 
         /*return new JsonModel([
             'root' => $this->productService->fetchAllModificationPropertyValues()

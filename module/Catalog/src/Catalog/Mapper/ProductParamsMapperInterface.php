@@ -18,4 +18,9 @@ interface ProductParamsMapperInterface
      * @return array | ProductParamsInterface[]
      */
     public function fetchParamsByProduct($id);
+
+    /**
+     * @return array
+     */
+    public function fetchAllProductParams();
 }

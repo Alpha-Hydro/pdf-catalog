@@ -45,7 +45,6 @@ class ProductService implements ProductServiceInterface
      */
     protected $modificationPropertyValueMapper;
 
-
     /**
      * @var ProductModificationParamValuesMapperInterface
      */
@@ -95,6 +94,14 @@ class ProductService implements ProductServiceInterface
     }
 
     /**
+     * @return array
+     */
+    public function fetchAllProductParams(){
+        $productParams = $this->productParamsMapper->fetchAllProductParams();
+        return $this->arrayGroupBy($productParams, ['product_id']);
+    }
+
+    /**
      * @param $id
      * @return array|\Catalog\Model\ModificationInterface[]
      */
@@ -131,50 +138,6 @@ class ProductService implements ProductServiceInterface
         return $this->modificationPropertyValueMapper->fetchModificationPropertyValues($modificationId);
     }
 
-    public function fetchAllProductsIsArray()
-    {
-
-
-        $result = [];
-        /*$products = $this->fetchAll()->toArray();
-        foreach ($products as $product){
-            $productId = (int) $product['id'];
-            $product['params'] = $this->fetchParamsByProduct($productId)->toArray();
-//            $product['property'] = $this->fetchModificationPropertyByProduct($productId)->toArray();
-
-//            $modifications = $this->fetchModificationsByProduct($productId);
-//            $product['modifications'] = $this->modificationTableValues($modifications);
-            $result[] = $product;
-        }*/
-
-
-        /*$key = 'modifications';
-        $modifications = $this->cache->getItem($key, $success);
-        if(!$success){
-            $modifications = $this->modificationMapper->fetchAllModifications()->toArray();
-            $this->cache->setItem($key, $modifications);
-        }
-
-        $key = 'modificationProperties';
-        $modificationProperties = $this->cache->getItem($key, $success);
-        if(!$success){
-            $modificationProperties = $this->modificationPropertyMapper->fetchAllModificationProperties()->toArray();
-            $this->cache->setItem($key, $modificationProperties);
-        }*/
-
-        /*$key = 'modificationPropertyValues';
-        $modificationPropertyValues = $cache->getItem($key, $success);
-        if(!$success){
-            $modificationPropertyValues = $this->modificationPropertyValueMapper->fetchAllModificationPropertyValues()->toArray();
-            $cache->setItem($key, $modificationPropertyValues);
-        }*/
-
-
-        //Debug::dump($cache->getOptions()); die();
-        $modificationPropertyValues = $this->modificationPropertyValueMapper->fetchAllModificationPropertyValues();
-
-        return $modificationPropertyValues;
-    }
 
     /**
      * @return array
@@ -184,7 +147,7 @@ class ProductService implements ProductServiceInterface
         return $this->modificationPropertyValueMapper->fetchAllModificationPropertyValues();
     }
 
-    public function fetchAllProductModificationPapamValues()
+    public function fetchAllProductModificationParamValues()
     {
         $array = $this->productModificationParamValuesMapper->fetchAllProductModificationParamValues();
         return $this->modificationTableValues($array);
@@ -213,14 +176,25 @@ class ProductService implements ProductServiceInterface
     private function modificationTableValues(&$array)
     {
         $result = [];
-        $products = $this->arrayGroupBy($array, ['product_id']);
 
-        foreach ($products as $id => $product){
-            $result[$id]['columns'][] = 'Название';
-
+        $productsParam = $this->arrayGroupBy($array, ['product_id', 'param_name']);
+        foreach ($productsParam as $id => $product){
+            //$result[$id]['columns'][] = 'Название';
+            foreach ($product as $name => $param){
+                $result[$id]['columns'][] = $name;
+            }
         }
 
-        return $products;
+        $productsModification = $this->arrayGroupBy($array, ['product_id', 'modification_name']);
+        foreach ($productsModification as $id => $modifications){
+            foreach ($modifications as $n => $params){
+                foreach ($params as $param){
+                    $result[$id]['rows'][$n][] = $param['param_value'];
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**

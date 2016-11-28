@@ -35,6 +35,11 @@ interface ProductServiceInterface
     public function fetchParamsByProduct($id);
 
     /**
+     * @return array
+     */
+    public function fetchAllProductParams();
+
+    /**
      * @param $id
      * @return array | ModificationInterface[]
      */
@@ -67,7 +72,6 @@ interface ProductServiceInterface
     /**
      * @return array
      */
-    public function fetchAllProductModificationPapamValues();
+    public function fetchAllProductModificationParamValues();
 
-    public function fetchAllProductsIsArray();
 }
