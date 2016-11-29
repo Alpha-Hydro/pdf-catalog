@@ -37,9 +37,6 @@ class Category implements CategoryInterface
      */
     protected $fullPath;
 
-
-    protected $subCategories = null;
-
     /**
      * @return int
      */

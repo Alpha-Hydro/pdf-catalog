@@ -52,7 +52,7 @@ class IndexController extends AbstractActionController
     {
         $id = '0';
         return new ViewModel([
-            'categories' => $this->categoryService->findCategoriesByParentId($id)
+            'categories' => $this->categoryService->fetchSubCategories($id)
         ]);
     }
 
@@ -71,7 +71,7 @@ class IndexController extends AbstractActionController
 
         return new ViewModel([
             'category' => ($id != 0)?$this->categoryService->find($id):null,
-            'subCategories' => $this->categoryService->findCategoriesByParentId($id)
+            'subCategories' => $this->categoryService->fetchSubCategories($id)
         ]);
     }
 
@@ -82,11 +82,6 @@ class IndexController extends AbstractActionController
         return new JsonModel(
             $this->categoryService->findTreeByParentId($id)
         );
-
-        /*return new ViewModel([
-            'category' => ($id != 0)?$this->categoryService->find($id):null,
-            'subCategories' => $this->categoryService->findTreeByParentId($id)
-        ]);*/
     }
 
     public function pdfAction()
@@ -110,16 +105,21 @@ class IndexController extends AbstractActionController
         $html = $this->renderer->render($view);
         $pdf->tableOfContent($html);
 
-        //Product
-        $id = '27816';
-        $view = new ViewModel([
-            'product' => $this->productService->find($id),
-            'productParams' => $this->productService->fetchParamsByProduct($id)
-        ]);
+        //Products
+        $products = $this->productService->fetchAll();
 
-        $view->setTemplate('partial/pdf/product');
-        $html = $this->renderer->render($view);
-        $pdf->viewProduct($html);
+        foreach ($products as $product){
+            $view = new ViewModel([
+                'product' => $product,
+                'productParams' => $this->productService->fetchParamsByProduct($product->getId())
+            ]);
+
+            $view->setTemplate('partial/pdf/product');
+            $html = $this->renderer->render($view);
+            $pdf->viewProduct($html);
+        }
+
+
 
         $pdf->Output('catalog.pdf', 'I');
     }

@@ -1,0 +1,44 @@
+<?php foreach ($this->products as $product): ?>
+    <span style="font-weight: bold; font-size: xx-large;"><?= $product['sku'] ?></span>
+    <br/>
+    <span style="font-weight: bold;"><?= $product['name'] ?></span>
+
+    <p>
+        <a href="http://pdf.alpha-hydro.loc/catalog/product/<?= $product['id'] ?>"><?= $product['full_path'] ?></a>
+    </p>
+
+    <?php if ($this->productParams[$product['id']]): ?>
+        <table class="table table-striped table-condensed product-property">
+            <?php foreach ($this->productParams[$product['id']] as $param):?>
+                <tr>
+                    <td><?= $param['name'] ?></td>
+                    <td><?= $param['value'] ?></td>
+                </tr>
+            <?php endforeach;?>
+        </table>
+    <?php endif;?>
+
+    <?php /*if($this->productModificationsTable[$product['id']]):*/?><!--
+        <table class="table table-striped table-condensed product-property">
+            <thead>
+            <tr>
+                <th>Название</th>
+                <?php /*foreach ($this->productModificationsTable[$product['id']]['columns'] as $column):*/?>
+                    <th><?/*= $column*/?></th>
+                <?php /*endforeach;*/?>
+            </tr>
+            </thead>
+            <tbody>
+            <?php /*foreach ($this->productModificationsTable[$product['id']]['rows'] as $name => $modification):*/?>
+                <tr>
+                    <td><?/*= $name*/?></td>
+                    <?php /*foreach ($modification as $value):*/?>
+                        <td><?/*= $value*/?></td>
+                    <?php /*endforeach;*/?>
+                </tr>
+            <?php /*endforeach;*/?>
+            </tbody>
+        </table>
+    --><?php /*endif;*/?>
+
+<?php endforeach; ?>

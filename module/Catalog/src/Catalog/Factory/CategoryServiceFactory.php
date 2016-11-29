@@ -11,6 +11,7 @@ namespace Catalog\Factory;
 
 
 use Catalog\Mapper\CategoryMapperInterface;
+use Catalog\Mapper\ProductMapperInterface;
 use Catalog\Service\CategoryService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -20,7 +21,8 @@ class CategoryServiceFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         return new CategoryService(
-            $serviceLocator->get(CategoryMapperInterface::class)
+            $serviceLocator->get(CategoryMapperInterface::class),
+            $serviceLocator->get(ProductMapperInterface::class)
         );
     }
 }

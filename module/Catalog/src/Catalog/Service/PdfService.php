@@ -118,7 +118,7 @@ class PdfService extends TCPDF
         $this->SetHeaderData('', 0, '', '');
         $this->AddPage();
         $this->writeHTML($html);
-        $this->lastPage();
+        //$this->lastPage();
 
         return $this;
     }

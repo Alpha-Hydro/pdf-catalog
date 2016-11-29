@@ -10,6 +10,7 @@
 namespace Catalog\Mapper;
 
 use Catalog\Model\CategoryInterface;
+use Zend\Db\ResultSet\HydratingResultSet;
 
 interface CategoryMapperInterface
 {
@@ -21,7 +22,14 @@ interface CategoryMapperInterface
     public function findCategory($id);
 
     /**
-     * @return array|CategoryInterface[]
+     * @return array|HydratingResultSet
      */
     public function fetchAllCategories();
+
+
+    /**
+     * @param $id
+     * @return array|HydratingResultSet
+     */
+    public function fetchSubCategories($id);
 }

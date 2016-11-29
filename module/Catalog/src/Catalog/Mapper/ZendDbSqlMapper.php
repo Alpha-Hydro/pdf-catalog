@@ -142,7 +142,7 @@ class ZendDbSqlMapper implements
 
     /**
      * @param $id
-     * @return object
+     * @return object CategoryInterface
      */
     public function findCategory($id)
     {
@@ -162,6 +162,36 @@ class ZendDbSqlMapper implements
 
 
     /**
+     * @param $id
+     * @return array|HydratingResultSet
+     */
+    public function fetchSubCategories($id)
+    {
+        $sql = new Sql($this->dbAdapter);
+        $select = $sql->select('categories');
+        $select
+            ->where([
+                'parent_id = ?' => $id,
+                'deleted != ?' => 1,
+                'active != ?' => 0,
+            ])
+            ->order('sorting ASC');
+
+        $stmt   = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+
+        if ($result instanceof ResultInterface && $result->isQueryResult()) {
+            $resultSet = new HydratingResultSet($this->hydrator, $this->categoryPrototype);
+            $resultSet->initialize($result);
+
+            return $resultSet;
+        }
+
+        return array();
+    }
+
+
+    /**
      * @return array|HydratingResultSet
      */
     public function fetchAllProducts()
@@ -174,6 +204,7 @@ class ZendDbSqlMapper implements
                 'active != ?' => 0,
             ])
             ->join('categories_xref', 'products.id = categories_xref.product_id')
+            //->limit(1000)
             ->order('sorting ASC');
 
         $stmt   = $sql->prepareStatementForSqlObject($select);
@@ -190,6 +221,10 @@ class ZendDbSqlMapper implements
     }
 
 
+    /**
+     * @param $category_id
+     * @return array|HydratingResultSet
+     */
     public function fetchProductsByCategory($category_id)
     {
         $sql = new Sql($this->dbAdapter);

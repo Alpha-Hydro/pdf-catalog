@@ -5,7 +5,6 @@
         <h3 id="category<?= $category->getId() ?>"><?= $category->getName() ?></h3>
         <p>
             <a href="/catalog/<?= $category->getId() ?>"><?= $category->getFullPath() ?></a>
-            (<?= $category->getSubCategories() ?>)
         </p>
     </article>
 <?php endforeach ?>

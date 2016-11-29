@@ -26,6 +26,12 @@ interface CategoryServiceInterface
     public function find($id);
 
     /**
+     * @param $id
+     * @return array|CategoryInterface[]
+     */
+    public function fetchSubCategories($id);
+
+    /**
      * @param $parentId
      * @return array|CategoryInterface[]
      */

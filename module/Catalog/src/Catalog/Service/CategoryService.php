@@ -10,7 +10,9 @@
 namespace Catalog\Service;
 
 use Catalog\Mapper\CategoryMapperInterface;
+use Catalog\Mapper\ProductMapperInterface;
 use Catalog\Model\Category;
+use Zend\Debug\Debug;
 
 class CategoryService implements CategoryServiceInterface
 {
@@ -19,21 +21,47 @@ class CategoryService implements CategoryServiceInterface
      */
     protected $categoryMapper;
 
-    public function __construct(CategoryMapperInterface $categoryMapper)
+    /**
+     * @var ProductMapperInterface
+     */
+    protected $productMapper;
+
+    public function __construct(CategoryMapperInterface $categoryMapper, ProductMapperInterface $productMapper)
     {
         $this->categoryMapper = $categoryMapper;
+        $this->productMapper = $productMapper;
     }
 
+    /**
+     * @return array|\Catalog\Model\CategoryInterface[]
+     */
     public function fetchAll()
     {
         return $this->categoryMapper->fetchAllCategories();
     }
 
+    /**
+     * @param int $id
+     * @return \Catalog\Model\CategoryInterface
+     */
     public function find($id)
     {
         return $this->categoryMapper->findCategory($id);
     }
 
+    /**
+     * @param $id
+     * @return array|\Catalog\Model\CategoryInterface[]
+     */
+    public function fetchSubCategories($id)
+    {
+        return $this->categoryMapper->fetchSubCategories($id);
+    }
+
+    /**
+     * @param $id
+     * @return array
+     */
     public function findTreeByParentId($id)
     {
         $result = array();
@@ -47,6 +75,25 @@ class CategoryService implements CategoryServiceInterface
         $resultTree = $this->_tree_recurse($result, $result[$id]);
 
         return $resultTree;
+    }
+
+    /**
+     * @param $id
+     * @return array
+     */
+    public function findCategoriesByParentId($id)
+    {
+        $resultSet = $this->categoryMapper->fetchAllCategories();
+
+        $subCategories = array();
+
+        foreach($resultSet as $category){
+            if($category->getParentId() === $id){
+                $subCategories[] = $category;
+            }
+        }
+
+        return $subCategories;
     }
 
     /**
@@ -69,25 +116,13 @@ class CategoryService implements CategoryServiceInterface
                     $row['sub_categories'] = $this->_tree_recurse($array, $array[$row['id']], $level);
                     $level--;
                 }
+                else{
+                    $row['products'] = $this->productMapper->fetchProductsByCategory($row['id'])->toArray();
+                }
                 $tree[] = $row;
             }
         }
 
         return $tree;
-    }
-
-    public function findCategoriesByParentId($id)
-    {
-        $resultSet = $this->categoryMapper->fetchAllCategories();
-
-        $subCategories = array();
-
-        foreach($resultSet as $category){
-            if($category->getParentId() === $id){
-                $subCategories[] = $category;
-            }
-        }
-
-        return $subCategories;
     }
 }

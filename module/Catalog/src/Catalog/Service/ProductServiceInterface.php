@@ -14,18 +14,19 @@ use Catalog\Model\ModificationPropertyInterface;
 use Catalog\Model\ModificationPropertyValueInterface;
 use Catalog\Model\ProductInterface;
 use Catalog\Model\ProductParamsInterface;
+use Zend\Db\ResultSet\HydratingResultSet;
 
 interface ProductServiceInterface
 {
     /**
-     * @return array|ProductInterface[]
+     * @return array|HydratingResultSet
      */
     public function fetchAll();
 
 
     /**
      * @param $category_id
-     * @return array|ProductInterface[]
+     * @return array|HydratingResultSet
      */
     public function fetchProductsByCategory($category_id);
 
@@ -37,7 +38,7 @@ interface ProductServiceInterface
 
     /**
      * @param $id
-     * @return array | ProductParamsInterface[]
+     * @return array | HydratingResultSet
      */
     public function fetchParamsByProduct($id);
 
@@ -48,13 +49,13 @@ interface ProductServiceInterface
 
     /**
      * @param $id
-     * @return array | ModificationInterface[]
+     * @return array | HydratingResultSet
      */
     public function fetchModificationsByProduct($id);
 
     /**
      * @param $id
-     * @return array | ModificationPropertyInterface[]
+     * @return array | HydratingResultSet
      */
     public function fetchModificationPropertyByProduct($id);
 
@@ -67,7 +68,7 @@ interface ProductServiceInterface
 
     /**
      * @param $id
-     * @return array | ModificationPropertyValueInterface[]
+     * @return array | HydratingResultSet
      */
     public function fetchModificationPropertyValues($id);
 

@@ -11,6 +11,7 @@ namespace Catalog\Mapper;
 
 
 use Catalog\Model\ProductInterface;
+use Zend\Db\ResultSet\HydratingResultSet;
 
 interface ProductMapperInterface
 {
@@ -22,13 +23,13 @@ interface ProductMapperInterface
     public function findProduct($id);
 
     /**
-     * @return array | ProductInterface[]
+     * @return array | HydratingResultSet
      */
     public function fetchAllProducts();
 
     /**
      * @param $category_id
-     * @return array | ProductInterface[]
+     * @return array | HydratingResultSet
      */
     public function fetchProductsByCategory($category_id);
 }
