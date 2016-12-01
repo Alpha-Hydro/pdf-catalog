@@ -79,6 +79,8 @@ class IndexController extends AbstractActionController
     {
         $id = ($this->params()->fromRoute('id'))?$this->params()->fromRoute('id'):0;
 
+        //Debug::dump($this->categoryService->findTreeByParentId($id));
+
         return new JsonModel(
             $this->categoryService->findTreeByParentId($id)
         );
@@ -97,15 +99,18 @@ class IndexController extends AbstractActionController
         $pdf->introduction($html);
 
         //Содержание
-        $id = '0';
+        /*$id = '0';
         $view = new ViewModel([
             'categories' => $this->categoryService->findTreeByParentId($id)
         ]);
         $view->setTemplate('partial/pdf/table-of-content');
         $html = $this->renderer->render($view);
-        $pdf->tableOfContent($html);
+        $pdf->tableOfContent($html);*/
 
-        //Products
+        $id = '0';
+        $pdf->tableOfContent($this->categoryService->findTreeByParentId($id));
+
+        /*//Products
         $products = $this->productService->fetchAll();
 
         foreach ($products as $product){
@@ -117,7 +122,7 @@ class IndexController extends AbstractActionController
             $view->setTemplate('partial/pdf/product');
             $html = $this->renderer->render($view);
             $pdf->viewProduct($html);
-        }
+        }*/
 
 
 

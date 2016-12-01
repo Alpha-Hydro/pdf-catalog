@@ -19,7 +19,7 @@ class PdfService extends TCPDF
     {
         parent::__construct(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
-        $this->setWidthWorkspacePage($this->getPageWidth()-PDF_MARGIN_LEFT-PDF_MARGIN_RIGHT);
+        $this->setWidthWorkspacePage($this->getPageWidth()-(PDF_MARGIN_LEFT+PDF_MARGIN_RIGHT));
     }
 
     public function Header()
@@ -31,7 +31,7 @@ class PdfService extends TCPDF
 
         $align = ($this->getNumPages() % 2 === 0)?'':'R';
 
-        $this->Cell($this->_widthWorkspacePage,0,$headerdata['title'], 0, 0, $align);
+        $this->Cell(0,0,$headerdata['title'], 0, 0, $align);
 
         $this->SetY(15);
         // set colors for gradients (r,g,b) or (grey 0-255)
@@ -42,7 +42,7 @@ class PdfService extends TCPDF
         $coords = array(0, 0, 1, 0);
 
         // paint a linear gradient
-        $this->LinearGradient(PDF_MARGIN_LEFT, $this->y, $this->_widthWorkspacePage, 1, $blue, $white, $coords);
+        $this->LinearGradient($this->lMargin, $this->y, $this->_widthWorkspacePage, 1, $blue, $white, $coords);
     }
 
     public function Footer()
@@ -88,6 +88,10 @@ class PdfService extends TCPDF
         // set image scale factor
         $this->setImageScale(PDF_IMAGE_SCALE_RATIO);
 
+
+        // set booklet mode
+        $this->SetBooklet(true, 10, 30);
+
         $this->SetFont('arialnarrow', '', 12, '', false);
 
         return $this;
@@ -103,12 +107,42 @@ class PdfService extends TCPDF
         return $this;
     }
 
-    public function tableOfContent($html)
+    public function tableOfContent($treeCategories)
     {
+        //$this->AddPage();
+        foreach ($treeCategories as $category1){
+            $this->SetHeaderData('', 0, $category1['name'], '');
+            $this->AddPage();
+            $this->Bookmark($category1['name'], 0 , 0, '', 'B', [237, 133, 31], $this->GetX());
+            //$this->Cell(0, 0, $category1['name'], 0, 1, 'L');
+            if($category1['sub_categories']){
+                foreach ($category1['sub_categories'] as $category2){
+                    //$this->AddPage();
+                    $this->Bookmark($category2['name'], 1 , 0, '', 'B', [0, 0, 0], $this->GetX());
+                    //$this->Cell(0, 0, $category2['name'], 0, 1, 'L');
+                    if($category2['sub_categories']){
+                        foreach ($category2['sub_categories'] as $category3){
+                            $this->AddPage();
+                            $this->Bookmark($category3['name'], 2 , 0, '', '', [0, 0, 0], $this->GetX());
+                            $this->Cell(0, 0, $category3['name'], 0, 1, 'L');
+                        }
+                    }
+                    else{
+                        $this->AddPage();
+                    }
+                    //$this->Bookmark($category2['name'], 1 , 0, '', 'B', [0, 0, 0]);
+                }
+            }
+            //$this->Bookmark($category1['name'], 0 , 0, '', 'B', [237, 133, 31]);
+        }
+
+        //$this->_setTableOfContent($treeCategories);
+
         $this->SetHeaderData('', 0, 'Содержание', '');
-        $this->AddPage();
-        $this->writeHTML($html);
-        $this->lastPage();
+        $this->addTOCPage();
+        $this->SetFont('arialnarrow', '', 12);
+        $this->addTOC(2, 'arialnarrow', '.', 'INDEX', '', array(128,0,0));
+        $this->endTOCPage();
 
         return $this;
     }
@@ -158,7 +192,7 @@ class PdfService extends TCPDF
         $this->SetFillColor(0,148,218);
         $this->SetTextColor(255);
         $this->SetFont('', 'B', 10);
-        $this->Cell($numberPageWith, 7, $this->getNumPages(), 0, 1, 'L', true, '', 0, false, 'M');
+        $this->Cell($numberPageWith, 7, $this->getAliasNumPage(), 0, 1, 'L', true, '', 0, false, 'M');
     }
 
     private function showFooterOddPage()
@@ -171,7 +205,7 @@ class PdfService extends TCPDF
         $this->setCellPaddings(0, 0, 5, 0);
         $this->SetFillColor(0,148,218);
         $this->SetTextColor(255);
-        $this->Cell($numberPageWith, 7, $this->getNumPages(), 0, 0, 'R', true, '', 0, false, 'M');
+        $this->Cell($numberPageWith, 7, $this->getAliasNumPage(), 0, 0, 'R', true, '', 0, false, 'M');
 
         //Строка
         $this->SetX($this->x + 3);
