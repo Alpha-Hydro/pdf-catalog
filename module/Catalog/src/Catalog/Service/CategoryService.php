@@ -12,6 +12,7 @@ namespace Catalog\Service;
 use Catalog\Mapper\CategoryMapperInterface;
 use Catalog\Mapper\ProductMapperInterface;
 use Catalog\Model\Category;
+use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Debug\Debug;
 
 class CategoryService implements CategoryServiceInterface
@@ -33,7 +34,7 @@ class CategoryService implements CategoryServiceInterface
     }
 
     /**
-     * @return array|\Catalog\Model\CategoryInterface[]
+     * @return array|HydratingResultSet
      */
     public function fetchAll()
     {
@@ -51,7 +52,7 @@ class CategoryService implements CategoryServiceInterface
 
     /**
      * @param $id
-     * @return array|\Catalog\Model\CategoryInterface[]
+     * @return array|HydratingResultSet
      */
     public function fetchSubCategories($id)
     {
@@ -65,16 +66,25 @@ class CategoryService implements CategoryServiceInterface
     public function findTreeByParentId($id)
     {
         $result = array();
-        $resultSet = $this->categoryMapper->fetchAllCategories();
+        $resultSet = $this->fetchSubCategories($id);
         $resultSet = $resultSet->toArray();
 
         foreach ($resultSet as $item) {
-            $result[$item['parent_id']][] = $item;
+            $item['level'] = 0;
+            $subCategories = $this->fetchSubCategories($item['id']);
+            if(0 != $subCategories->count()){
+                $item['sub_categories'] = $subCategories->toArray();
+                foreach($item['sub_categories'] as $subCategory){
+                    $this->findTreeByParentId($subCategory['id']);
+                }
+            }
+
+            $result[] = $item;
         }
 
-        $resultTree = $this->_tree_recurse($result, $result[$id]);
+        //$resultTree = $this->_tree_recurse($result, $result[$id]);
 
-        return $resultTree;
+        return $result;
     }
 
     /**
@@ -94,6 +104,30 @@ class CategoryService implements CategoryServiceInterface
         }
 
         return $subCategories;
+    }
+
+
+    public function fetchAllProductsByCategory($id, &$result = null){
+        if(is_null($result))
+            $result = array();
+
+        $productCategory = $this->productMapper->fetchProductsByCategory($id);
+
+        if(0 != $productCategory->count())
+            $result = array_merge($result, $productCategory->toArray());
+
+        $subCategories = $this->fetchSubCategories($id);
+        if(0 != $subCategories->count()){
+            foreach ($subCategories as $subCategory){
+                $productSubCategory = $this->productMapper->fetchProductsByCategory($subCategory->getId());
+                $result = array_merge($result, $productSubCategory->toArray());
+                $children = $this->fetchSubCategories($subCategory->getId());
+                if(0 != $children->count())
+                    $this->fetchAllProductsByCategory($subCategory->getId(), $result);
+            }
+        }
+
+        return $result;
     }
 
     /**

@@ -10,12 +10,13 @@
 namespace Catalog\Service;
 
 use Catalog\Model\CategoryInterface;
+use Zend\Db\ResultSet\HydratingResultSet;
 
 
 interface CategoryServiceInterface
 {
     /**
-     * @return array|CategoryInterface[]
+     * @return array|HydratingResultSet
      */
     public function fetchAll();
 
@@ -27,19 +28,25 @@ interface CategoryServiceInterface
 
     /**
      * @param $id
-     * @return array|CategoryInterface[]
+     * @return array|HydratingResultSet
      */
     public function fetchSubCategories($id);
 
     /**
      * @param $parentId
-     * @return array|CategoryInterface[]
+     * @return array|HydratingResultSet
      */
     public function findTreeByParentId($parentId);
 
     /**
      * @param $parentId
-     * @return array|CategoryInterface[]
+     * @return array|HydratingResultSet
      */
     public function findCategoriesByParentId($parentId);
+
+    /**
+     * @param $id
+     * @return array
+     */
+    public function fetchAllProductsByCategory($id);
 }

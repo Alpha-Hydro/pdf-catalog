@@ -25,7 +25,7 @@ class PdfService extends TCPDF
         parent::__construct(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
         $this->setWidthWorkspacePage($this->getPageWidth()-(PDF_MARGIN_LEFT+PDF_MARGIN_RIGHT));
-        $this->setImageFieldBookmark('3.a4.small.png');
+        $this->setImageFieldBookmark('fieldBookmark.png');
     }
 
     public function Header()
@@ -46,9 +46,14 @@ class PdfService extends TCPDF
 
         // set the coordinates x1,y1,x2,y2 of the gradient (see linear_gradient_coords.jpg)
         $coords = array(0, 0, 1, 0);
+        $wl = $this->w-$this->lMargin-$this->rMargin;
 
-        // paint a linear gradient
-        $this->LinearGradient($this->lMargin, $this->y, $this->_widthWorkspacePage, 1, $blue, $white, $coords);
+        if ($this->getNumPages() % 2 === 0){
+            $this->LinearGradient($this->lMargin, $this->y, $wl, 1, $blue, $white, $coords);
+        }
+        else{
+            $this->LinearGradient($this->lMargin, $this->y, $wl, 1, $white, $blue, $coords);
+        }
 
         $this->fieldBookmarks();
     }
@@ -302,7 +307,7 @@ class PdfService extends TCPDF
 
 
         // set booklet mode
-        $this->SetBooklet(true, 10, 30);
+        $this->SetBooklet(true, 15, 20);
 
         $this->SetFont('arialnarrow', '', 12, '', false);
 
@@ -322,9 +327,10 @@ class PdfService extends TCPDF
     public function tableOfContent($treeCategories)
     {
         //$this->AddPage();
-        $this->setImageFieldBookmark('3.active.a4.png');
+        //$this->setImageFieldBookmark('3.active.a4.png');
         foreach ($treeCategories as $category1){
             $this->SetHeaderData('', 0, $category1['name'], '');
+            $this->setImageFieldBookmark('fieldBookmark_'.$category1['id'].'.png');
             $this->AddPage();
             $this->Bookmark($category1['name'], 0 , 0, '', 'B', [237, 133, 31]);
             //$this->Cell(0, 0, $category1['name'], 0, 1, 'L');
@@ -430,22 +436,22 @@ class PdfService extends TCPDF
     }
 
     private function fieldBookmarks(){
-        $template_id = $this->startTemplate(60, 60, true);
+        $template_id = $this->startTemplate(14, 0, true);
 
         $image_file = $this->getImageFieldBookmark();
         if($this->getNumPages() % 2 === 0){
-            $this->Image($image_file, 0, 0, 15, 0, 'PNG', '', '', true, 150, '', false, false, 0, false, false, false);
+            $this->Image($image_file, 0, 0, 14, 0, 'PNG', '', '', true, 300, '', false, false, 0, false, false, false);
         }
         else{
             $this->StartTransform();
             $this->MirrorH();
-            $this->Image($image_file, -15, 0, 15, 0, 'PNG', '', '', true, 150, '', false, false, 0, false, false, false);
+            $this->Image($image_file, -14, 0, 14, 0, 'PNG', '', '', true, 300, '', false, false, 0, false, false, false);
             $this->StopTransform();
         }
 
         $this->endTemplate();
 
-        $x = ($this->getNumPages() % 2 === 0)?$this->w - 15:0;
+        $x = ($this->getNumPages() % 2 === 0)?$this->w - 13:0;
 
         $this->printTemplate($template_id, $x, 20, 0, 0, '', '', false);
     }
@@ -463,6 +469,9 @@ class PdfService extends TCPDF
      */
     public function setImageFieldBookmark($image_field_bookmark)
     {
-        $this->_image_field_bookmark = __DIR__ .'/../../../../../data/images/pdf/'.$image_field_bookmark;
+        $image_path = __DIR__ .'/../../../../../data/images/pdf/';
+        $image = $image_path.$image_field_bookmark;
+
+        $this->_image_field_bookmark = (file_exists($image))?$image: $image_path.'fieldBookmark.png';
     }
 }
