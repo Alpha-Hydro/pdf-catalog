@@ -330,9 +330,9 @@ class PdfService extends TCPDF
             $this->SetHeaderData('', 0, $category1['name'], '');
             $this->setImageFieldBookmark('fieldBookmark_'.$category1['id'].'.png');
             $this->AddPage();
-
+            $this->Bookmark($category1['name'], 0 , 0, '', 'B', [237, 133, 31]);
             if($category1['sub_categories']){
-                $this->Bookmark($category1['name'], 0 , 0, '', 'B', [237, 133, 31]);
+
                 foreach ($category1['sub_categories'] as $category2){
                     if($category2['sub_categories']){
                         $this->SetHeaderData('', 0, $category2['name'], '');
