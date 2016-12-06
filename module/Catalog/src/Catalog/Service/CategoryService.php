@@ -12,6 +12,7 @@ namespace Catalog\Service;
 use Catalog\Mapper\CategoryMapperInterface;
 use Catalog\Mapper\ProductMapperInterface;
 use Catalog\Model\Category;
+use Zend\Cache\Storage\Adapter\Filesystem;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Debug\Debug;
 
@@ -27,10 +28,20 @@ class CategoryService implements CategoryServiceInterface
      */
     protected $productMapper;
 
-    public function __construct(CategoryMapperInterface $categoryMapper, ProductMapperInterface $productMapper)
+    /**
+     * @var Filesystem
+     */
+    protected $cache;
+
+    public function __construct(
+        CategoryMapperInterface $categoryMapper,
+        ProductMapperInterface $productMapper,
+        Filesystem $cache
+    )
     {
         $this->categoryMapper = $categoryMapper;
         $this->productMapper = $productMapper;
+        $this->cache = $cache;
     }
 
     /**
@@ -61,52 +72,42 @@ class CategoryService implements CategoryServiceInterface
 
     /**
      * @param $id
+     * @param int $level
      * @return array
      */
-    public function findTreeByParentId($id)
+    public function findTreeByParentId($id, $level = 0)
     {
         $result = array();
         $resultSet = $this->fetchSubCategories($id);
         $resultSet = $resultSet->toArray();
 
         foreach ($resultSet as $item) {
-            $item['level'] = 0;
+            $item['level'] = $level;
             $subCategories = $this->fetchSubCategories($item['id']);
-            if(0 != $subCategories->count()){
-                $item['sub_categories'] = $subCategories->toArray();
-                foreach($item['sub_categories'] as $subCategory){
-                    $this->findTreeByParentId($subCategory['id']);
-                }
+            if(0 != $subCategories->count() && $level < 2){
+                $item['sub_categories'] = $this->findTreeByParentId($item['id'], $level+1);
             }
+            else{
+                $keyCache = 'productsCategory_'.$item['id'];
+                $productsCategory = $this->cache->getItem($keyCache, $success);
 
+                if(!$success){
+                    $productsCategory = $this->fetchAllProductsByCategory($item['id']);
+                    $this->cache->setItem($keyCache, $productsCategory);
+                }
+                $item['products'] = $productsCategory;
+            }
             $result[] = $item;
         }
-
-        //$resultTree = $this->_tree_recurse($result, $result[$id]);
 
         return $result;
     }
 
     /**
      * @param $id
-     * @return array
+     * @param null $result
+     * @return array|null
      */
-    public function findCategoriesByParentId($id)
-    {
-        $resultSet = $this->categoryMapper->fetchAllCategories();
-
-        $subCategories = array();
-
-        foreach($resultSet as $category){
-            if($category->getParentId() === $id){
-                $subCategories[] = $category;
-            }
-        }
-
-        return $subCategories;
-    }
-
-
     public function fetchAllProductsByCategory($id, &$result = null){
         if(is_null($result))
             $result = array();
@@ -130,33 +131,4 @@ class CategoryService implements CategoryServiceInterface
         return $result;
     }
 
-    /**
-     * @param $array
-     * @param $parent array
-     * @param int $level
-     * @return array
-     */
-    protected function _tree_recurse(&$array, $parent, $level = 1)
-    {
-        $tree = array();
-
-        if($parent){
-            foreach ($parent as $row)
-            {
-                $row['level'] = $level;
-                if(isset($array[$row['id']]))
-                {
-                    $level++;
-                    $row['sub_categories'] = $this->_tree_recurse($array, $array[$row['id']], $level);
-                    $level--;
-                }
-                else{
-                    $row['products'] = $this->productMapper->fetchProductsByCategory($row['id'])->toArray();
-                }
-                $tree[] = $row;
-            }
-        }
-
-        return $tree;
-    }
 }

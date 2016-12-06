@@ -89,6 +89,8 @@ class IndexController extends AbstractActionController
 
     public function pdfAction()
     {
+        $id = ($this->params()->fromRoute('id'))?$this->params()->fromRoute('id'):0;
+
         $pdf = $this->pdfService;
         $pdf->defaultSettingsPage();
 
@@ -99,7 +101,6 @@ class IndexController extends AbstractActionController
         $html = $this->renderer->render($view);
         $pdf->introduction($html);
 
-        $id = '0';
         $pdf->tableOfContent($this->categoryService->findTreeByParentId($id));
 
         /*//Products

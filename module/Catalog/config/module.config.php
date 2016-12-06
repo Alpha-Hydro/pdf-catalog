@@ -88,9 +88,12 @@ return array(
                     'pdf' => array(
                         'type' => 'segment',
                         'options' => array(
-                            'route'    => '/pdf',
+                            'route'    => '/pdf[/:id]',
                             'defaults' => array(
                                 'action' => 'pdf'
+                            ),
+                            'constraints' => array(
+                                'id' => '[0-9]\d*'
                             )
                         )
                     ),

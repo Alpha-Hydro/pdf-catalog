@@ -39,12 +39,6 @@ interface CategoryServiceInterface
     public function findTreeByParentId($parentId);
 
     /**
-     * @param $parentId
-     * @return array|HydratingResultSet
-     */
-    public function findCategoriesByParentId($parentId);
-
-    /**
      * @param $id
      * @return array
      */

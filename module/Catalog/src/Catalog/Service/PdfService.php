@@ -326,37 +326,37 @@ class PdfService extends TCPDF
 
     public function tableOfContent($treeCategories)
     {
-        //$this->AddPage();
-        //$this->setImageFieldBookmark('3.active.a4.png');
         foreach ($treeCategories as $category1){
             $this->SetHeaderData('', 0, $category1['name'], '');
             $this->setImageFieldBookmark('fieldBookmark_'.$category1['id'].'.png');
             $this->AddPage();
-            $this->Bookmark($category1['name'], 0 , 0, '', 'B', [237, 133, 31]);
-            //$this->Cell(0, 0, $category1['name'], 0, 1, 'L');
+
             if($category1['sub_categories']){
+                $this->Bookmark($category1['name'], 0 , 0, '', 'B', [237, 133, 31]);
                 foreach ($category1['sub_categories'] as $category2){
-                    //$this->AddPage();
-                    $this->Bookmark($category2['name'], 1 , 0, '', 'B', [0, 0, 0]);
-                    //$this->Cell(0, 0, $category2['name'], 0, 1, 'L');
                     if($category2['sub_categories']){
+                        $this->SetHeaderData('', 0, $category2['name'], '');
+                        $this->Bookmark($category2['name'], 1 , 0, '', 'B', [0, 0, 0]);
                         foreach ($category2['sub_categories'] as $category3){
-                            $this->AddPage();
-                            $this->Bookmark($category3['name'], 2 , 0, '', '', [0, 0, 0]);
-                            $this->Cell(0, 0, $category3['name'], 0, 1, 'L');
+                            if($category3['products']){
+                                $this->AddPage();
+                                $this->Bookmark($category3['name'], 2 , 0, '', '', [0, 0, 0]);
+                                //$this->Cell(0, 0, $category3['name'], 0, 1, 'L');
+                                foreach ($category3['products'] as $product){
+                                    $this->Cell(0, 0, $product['sku'], 0, 1, 'L');
+                                }
+                            }
                         }
-                    }
-                    else{
-                        $this->AddPage();
                     }
                 }
             }
+            //$this->SetHeaderData('', 0, $category1['name'], '');
         }
 
         $this->SetHeaderData('', 0, 'Содержание', '');
         $this->addTOCPage();
         $this->SetFont('arialnarrow', '', 12);
-        $this->addTOC(2, 'arialnarrow', '.', 'INDEX', '', array(128,0,0));
+        $this->addTOC(2, 'arialnarrow', '.', 'Содержание', '', array(128,0,0));
         $this->endTOCPage();
 
         return $this;

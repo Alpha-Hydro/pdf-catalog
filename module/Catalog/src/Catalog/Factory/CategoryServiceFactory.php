@@ -22,7 +22,8 @@ class CategoryServiceFactory implements FactoryInterface
     {
         return new CategoryService(
             $serviceLocator->get(CategoryMapperInterface::class),
-            $serviceLocator->get(ProductMapperInterface::class)
+            $serviceLocator->get(ProductMapperInterface::class),
+            $serviceLocator->get('cache')
         );
     }
 }
