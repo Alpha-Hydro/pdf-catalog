@@ -297,6 +297,10 @@ class ZendDbSqlMapper implements
         return array();
     }
 
+    /**
+     * Массив ВСЕХ продуктов со свойствами и значениями
+     * @return array
+     */
     public function fetchAllProductParams()
     {
         $keyCache = 'productParams';
@@ -484,6 +488,8 @@ class ZendDbSqlMapper implements
     }
 
     /**
+     * Массив ВСЕХ значений параметров модификаций
+     * через кеш
      * @return array
      */
     public function fetchAllModificationPropertyValues()
@@ -519,6 +525,8 @@ class ZendDbSqlMapper implements
     }
 
     /**
+     * Массив ВСЕХ продуктов с параметрами и значениями по модификациям (таблица модификаций)
+     * через кеш
      * @return array
      */
     public function fetchAllProductModificationParamValues()

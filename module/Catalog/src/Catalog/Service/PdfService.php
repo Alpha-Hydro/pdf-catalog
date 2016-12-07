@@ -16,9 +16,25 @@ use Zend\Debug\Debug;
 
 class PdfService extends TCPDF
 {
+    /**
+     * @var int
+     */
     protected $_widthWorkspacePage;
 
+    /**
+     * @var string
+     */
     protected $_image_field_bookmark;
+
+    /**
+     * @var array
+     */
+    protected $_product_property = [];
+
+    /**
+     * @var array
+     */
+    protected $_product_table_modification = [];
 
     public function __construct()
     {
@@ -343,7 +359,7 @@ class PdfService extends TCPDF
                                 $this->Bookmark($category3['name'], 2 , 0, '', '', [0, 0, 0]);
                                 //$this->Cell(0, 0, $category3['name'], 0, 1, 'L');
                                 foreach ($category3['products'] as $product){
-                                    $this->Cell(0, 0, $product['sku'], 0, 1, 'L');
+                                    $this->viewProduct($product);
                                 }
                             }
                         }
@@ -362,14 +378,52 @@ class PdfService extends TCPDF
         return $this;
     }
 
-    public function viewProduct($html)
+    public function viewProduct($product)
     {
-        $this->SetHeaderData('', 0, '', '');
-        $this->AddPage();
-        $this->writeHTML($html);
-        //$this->lastPage();
+        $this->SetFont('arialnarrow', 'B', 16);
+        $this->Cell(0, 0, $product['sku'], 0, 1, 'L');
 
-        return $this;
+
+        $this->SetFontSize(12);
+        //$this->SetDrawColor(237, 133, 31); //orange
+        //$this->SetDrawColor(0, 141, 210); //blue
+        $this->SetDrawColor(160,160,160); //gray
+        $this->SetLineWidth(0.1);
+        $this->Cell(0, 0, $product['name'], 'B', 1, 'L');
+
+        $this->Ln(5);
+
+        $image_file = __DIR__ .'/../../../../..'.$product['upload_path'].$product['image'];
+        $this->Image($image_file,$this->x,$this->y,'', 25, '', '', 'T');
+
+        $this->SetX($this->x + 5);
+
+        if($product['draft']){
+            $image_draft = __DIR__ .'/../../../../..'.$product['upload_path_draft'].$product['draft'];
+            if(file_exists($image_draft))
+                $this->Image($image_draft,$this->x,$this->y, '', 25, '', '', 'T',true,190);
+            $this->SetX($this->x + 5);
+        }
+
+        $productProperty = $this->getProductProperty($product['id']);
+
+        $x = $this->getImageRBX()+5;
+        if(!empty($productProperty)){
+            $w = array(30, $this->getPageWidth()-$this->original_rMargin-$x-30);
+            foreach ($productProperty as $property){
+                $this->SetFont('','B',8);
+                $this->MultiCell($w[0], 0, $property['name'], 0, 'L', false, 0, $x, '', true, 0, false, true, 0);
+
+                $this->SetFont('','',8);
+                $this->MultiCell($w[1], 0, $property['value'], 0, 'L', false, 0, '', '', true, 0, false, true, 0);
+
+                $this->Ln();
+            }
+        }
+
+        $this->Ln(5);
+
+        //return $this;
     }
 
     /**
@@ -388,6 +442,61 @@ class PdfService extends TCPDF
     public function getWidthWorkspacePage()
     {
         return $this->_widthWorkspacePage;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImageFieldBookmark()
+    {
+        return $this->_image_field_bookmark;
+    }
+
+    /**
+     * @param mixed $image_field_bookmark
+     */
+    public function setImageFieldBookmark($image_field_bookmark)
+    {
+        $image_path = __DIR__ .'/../../../../../data/images/pdf/';
+        $image = $image_path.$image_field_bookmark;
+
+        $this->_image_field_bookmark = (file_exists($image))?$image: $image_path.'fieldBookmark.png';
+    }
+
+    /**
+     * @param null $id
+     * @return array
+     */
+    public function getProductProperty($id = null)
+    {
+        if(!is_null($id))
+            return $this->_product_property[$id];
+
+        return $this->_product_property;
+    }
+
+    /**
+     * @param array $product_property
+     */
+    public function setProductProperty($product_property)
+    {
+        $this->_product_property = $product_property;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductTableModification()
+    {
+        return $this->_product_table_modification;
+    }
+
+    /**
+     * @param array $product_table_modification
+     */
+    public function setProductTableModification($product_table_modification)
+    {
+        $this->_product_table_modification = $product_table_modification;
     }
 
     private function showFooterEvenPage()
@@ -456,22 +565,4 @@ class PdfService extends TCPDF
         $this->printTemplate($template_id, $x, 20, 0, 0, '', '', false);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getImageFieldBookmark()
-    {
-        return $this->_image_field_bookmark;
-    }
-
-    /**
-     * @param mixed $image_field_bookmark
-     */
-    public function setImageFieldBookmark($image_field_bookmark)
-    {
-        $image_path = __DIR__ .'/../../../../../data/images/pdf/';
-        $image = $image_path.$image_field_bookmark;
-
-        $this->_image_field_bookmark = (file_exists($image))?$image: $image_path.'fieldBookmark.png';
-    }
 }

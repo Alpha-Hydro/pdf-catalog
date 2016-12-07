@@ -93,6 +93,8 @@ class IndexController extends AbstractActionController
 
         $pdf = $this->pdfService;
         $pdf->defaultSettingsPage();
+        $pdf->setProductProperty($this->productService->fetchAllProductParams());
+        $pdf->setProductTableModification($this->productService->fetchAllProductModificationParamValues());
 
 
         //Введение
