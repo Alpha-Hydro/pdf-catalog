@@ -17,20 +17,26 @@ use Catalog\Mapper\ProductParamsMapperInterface;
 use Catalog\Mapper\ProductMapperInterface;
 use Catalog\Service\ProductService;
 
+use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ProductServiceFactory implements FactoryInterface
 {
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new ProductService(
-            $serviceLocator->get(ProductMapperInterface::class),
-            $serviceLocator->get(ProductParamsMapperInterface::class),
-            $serviceLocator->get(ModificationMapperInterface::class),
-            $serviceLocator->get(ModificationPropertyMapperInterface::class),
-            $serviceLocator->get(ModificationPropertyValueMapperInterface::class),
-            $serviceLocator->get(ProductModificationParamValuesMapperInterface::class)
+            $container->get(ProductMapperInterface::class),
+            $container->get(ProductParamsMapperInterface::class),
+            $container->get(ModificationMapperInterface::class),
+            $container->get(ModificationPropertyMapperInterface::class),
+            $container->get(ModificationPropertyValueMapperInterface::class),
+            $container->get(ProductModificationParamValuesMapperInterface::class)
         );
+    }
+
+    public function createService(ServiceLocatorInterface $serviceLocator)
+    {
+        return $this($serviceLocator, ProductService::class);
     }
 }

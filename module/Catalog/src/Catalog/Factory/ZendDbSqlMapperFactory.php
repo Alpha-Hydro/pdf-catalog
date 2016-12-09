@@ -18,6 +18,7 @@ use Catalog\Model\ModificationProperty;
 use Catalog\Model\ModificationPropertyValue;
 use Catalog\Model\ProductModificationParamValues;
 
+use Interop\Container\ContainerInterface;
 use Zend\Db\Adapter\Adapter;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -25,11 +26,12 @@ use Zend\Stdlib\Hydrator\ClassMethods;
 
 class ZendDbSqlMapperFactory implements FactoryInterface
 {
-    public function createService(ServiceLocatorInterface $serviceLocator)
+
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new ZendDbSqlMapper(
-            $serviceLocator->get(Adapter::class),
-            $serviceLocator->get('cache'),
+            $container->get(Adapter::class),
+            $container->get('cache'),
             new ClassMethods(),// new ClassMethods(false),
             new Category(),
             new Product(),
@@ -39,5 +41,10 @@ class ZendDbSqlMapperFactory implements FactoryInterface
             new ModificationPropertyValue(),
             new ProductModificationParamValues()
         );
+    }
+
+    public function createService(ServiceLocatorInterface $serviceLocator)
+    {
+        return $this($serviceLocator, ZendDbSqlMapper::class);
     }
 }

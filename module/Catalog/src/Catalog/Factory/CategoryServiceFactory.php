@@ -13,17 +13,24 @@ namespace Catalog\Factory;
 use Catalog\Mapper\CategoryMapperInterface;
 use Catalog\Mapper\ProductMapperInterface;
 use Catalog\Service\CategoryService;
+
+use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class CategoryServiceFactory implements FactoryInterface
 {
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new CategoryService(
-            $serviceLocator->get(CategoryMapperInterface::class),
-            $serviceLocator->get(ProductMapperInterface::class),
-            $serviceLocator->get('cache')
+            $container->get(CategoryMapperInterface::class),
+            $container->get(ProductMapperInterface::class),
+            $container->get('cache')
         );
+    }
+
+    public function createService(ServiceLocatorInterface $serviceLocator)
+    {
+        return $this($serviceLocator, CategoryService::class);
     }
 }

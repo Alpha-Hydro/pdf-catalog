@@ -342,6 +342,7 @@ class PdfService extends TCPDF
 
     public function tableOfContent($treeCategories)
     {
+        //set_time_limit(1800);
         foreach ($treeCategories as $category1){
             $this->SetHeaderData('', 0, $category1['name'], '');
             $this->setImageFieldBookmark('fieldBookmark_'.$category1['id'].'.png');
@@ -357,7 +358,7 @@ class PdfService extends TCPDF
                             if($category3['products']){
                                 $this->AddPage();
                                 $this->Bookmark($category3['name'], 2 , 0, '', '', [0, 0, 0]);
-                                //$this->Cell(0, 0, $category3['name'], 0, 1, 'L');
+                                $this->Cell(0, 0, $category3['name'], 0, 1, 'L');
                                 foreach ($category3['products'] as $product){
                                     $this->viewProduct($product);
                                 }
@@ -415,6 +416,7 @@ class PdfService extends TCPDF
                 $this->MultiCell($w[0], 0, $property['name'], 0, 'L', false, 0, $x, '', true, 0, false, true, 0);
 
                 $this->SetFont('','',8);
+                //$value =
                 $this->MultiCell($w[1], 0, $property['value'], 0, 'L', false, 0, '', '', true, 0, false, true, 0);
 
                 $this->Ln();
@@ -422,8 +424,6 @@ class PdfService extends TCPDF
         }
 
         $this->Ln(5);
-
-        //return $this;
     }
 
     /**

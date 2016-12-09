@@ -10,13 +10,18 @@
 namespace Catalog\Factory;
 
 use Catalog\Service\PdfService;
+use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class PdfServiceFactory implements FactoryInterface
 {
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null){
+        return new PdfService();
+    }
+
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new PdfService();
+        return $this($serviceLocator, PdfService::class);
     }
 }
