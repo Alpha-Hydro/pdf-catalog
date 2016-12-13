@@ -82,8 +82,8 @@ class IndexController extends AbstractActionController
         //Debug::dump($this->categoryService->fetchAllProductsByCategory($id));
 
         return new JsonModel(
-            $this->categoryService->findTreeByParentId($id)
-            //$this->categoryService->fetchAllProductsByCategory($id)
+            //$this->categoryService->findTreeByParentId($id)
+            $this->categoryService->fetchAllProductsByCategory($id)
         );
     }
 

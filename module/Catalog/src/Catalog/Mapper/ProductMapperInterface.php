@@ -17,10 +17,11 @@ interface ProductMapperInterface
 {
     /**
      * @param $id
-     * @return ProductInterface
+     * @param $toArray
+     * @return ProductInterface throws \InvalidArgumentException
      * throws \InvalidArgumentException
      */
-    public function findProduct($id);
+    public function findProduct($id, $toArray = false);
 
     /**
      * @return array | HydratingResultSet

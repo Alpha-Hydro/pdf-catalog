@@ -19,9 +19,11 @@ class ProductsControllerFactory implements FactoryInterface
     {
         $realServiceLocator = $serviceLocator->getServiceLocator();
         $productService = $realServiceLocator->get('Catalog\Service\ProductServiceInterface');
+        $baseService = $realServiceLocator->get('Catalog\Service\BaseServiceInterface');
 
         return new ProductsController(
-            $productService
+            $productService,
+            $baseService
         );
     }
 

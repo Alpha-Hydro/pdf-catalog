@@ -11,7 +11,6 @@ namespace Catalog\Service;
 
 use Catalog\Mapper\CategoryMapperInterface;
 use Catalog\Mapper\ProductMapperInterface;
-use Catalog\Model\Category;
 use Zend\Cache\Storage\Adapter\Filesystem;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Debug\Debug;

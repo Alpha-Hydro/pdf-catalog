@@ -10,6 +10,7 @@
 namespace Catalog\Service;
 
 
+use Catalog\Mapper\CategoryMapperInterface;
 use Catalog\Mapper\ModificationMapperInterface;
 use Catalog\Mapper\ModificationPropertyMapperInterface;
 use Catalog\Mapper\ModificationPropertyValueMapperInterface;
@@ -18,10 +19,14 @@ use Catalog\Mapper\ProductModificationParamValuesMapperInterface;
 use Catalog\Mapper\ProductParamsMapperInterface;
 use Catalog\Model\ModificationPropertyValueInterface;
 use Zend\Cache\Storage\Adapter\Filesystem;
-use Zend\Db\ResultSet\HydratingResultSet;
 
-class ProductService implements ProductServiceInterface
+class BaseService implements BaseServiceInterface
 {
+    /**
+     * @var CategoryMapperInterface
+     */
+    protected $categoryMapper;
+
     /**
      * @var ProductMapperInterface
      */
@@ -60,14 +65,11 @@ class ProductService implements ProductServiceInterface
     /**
      * @var array
      */
-    protected $_product_params = [];
-
-    /**
-     * @var array
-     */
     protected $_modification_table = [];
 
+
     public function __construct(
+        CategoryMapperInterface $categoryMapper,
         ProductMapperInterface $productMapper,
         ProductParamsMapperInterface $productParamsMapper,
         ModificationMapperInterface $modificationMapper,
@@ -77,6 +79,7 @@ class ProductService implements ProductServiceInterface
         Filesystem $cache
     )
     {
+        $this->categoryMapper = $categoryMapper;
         $this->productMapper = $productMapper;
         $this->productParamsMapper = $productParamsMapper;
         $this->modificationMapper = $modificationMapper;
@@ -85,56 +88,10 @@ class ProductService implements ProductServiceInterface
         $this->productModificationParamValuesMapper = $modificationParamValuesMapper;
         $this->cache = $cache;
 
-        $this->_product_params = $this->fetchAllProductParams();
         $this->_modification_table = $this->fetchAllProductModificationParamValues();
     }
 
-    /**
-     * @return array|HydratingResultSet
-     */
-    public function fetchAll()
-    {
-        return $this->productMapper->fetchAllProducts();
-    }
-
-    /**
-     * @param $category_id
-     * @return array|HydratingResultSet
-     */
-    public function fetchProductsByCategory($category_id)
-    {
-        return $this->productMapper->fetchProductsByCategory($category_id);
-    }
-
-
-    public function getFullArrayProductsByCategory($category_id)
-    {
-        $result = [];
-        $productsCategory = $this->productMapper->fetchProductsByCategory($category_id);
-
-        if(0 != $productsCategory->count()){
-            foreach ($productsCategory as $product){
-                $result[] = $this->getFullInArray($product->getId());
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param int $id
-     * @return \Catalog\Model\ProductInterface
-     */
-    public function find($id)
-    {
-        return $this->productMapper->findProduct($id);
-    }
-
-    /**
-     * @param $id
-     * @return array
-     */
-    public function getFullInArray($id)
+    public function getProductById($id)
     {
         $keyCache = 'product_'.$id;
         $product = $this->cache->getItem($keyCache, $success);
@@ -142,9 +99,10 @@ class ProductService implements ProductServiceInterface
         if(!$success){
             $product = $this->productMapper->findProduct($id, true);
 
-            $productProperty = $this->_product_params[$id];
-            if($productProperty)
-                $product['property'] = $this->arrayGroupProductProperty($productProperty);
+            $productProperty = $this->productParamsMapper->fetchParamsByProduct($id);
+            if(0 != $productProperty->count()){
+                $product['property'] = $this->arrayGroupProductProperty($productProperty->toArray());
+            }
 
             $productModification = $this->_modification_table[$id];
             if($productModification)
@@ -157,69 +115,6 @@ class ProductService implements ProductServiceInterface
     }
 
     /**
-     * @param $id
-     * @return array|\Catalog\Model\ProductParamsInterface[]
-     */
-    public function fetchParamsByProduct($id)
-    {
-        return $this->productParamsMapper->fetchParamsByProduct($id);
-    }
-
-    /**
-     * @return array
-     */
-    public function fetchAllProductParams(){
-        $productParams = $this->productParamsMapper->fetchAllProductParams();
-        return $this->arrayGroupBy($productParams, ['product_id']);
-    }
-
-    /**
-     * @param $id
-     * @return array|\Catalog\Model\ModificationInterface[]
-     */
-    public function fetchModificationsByProduct($id)
-    {
-        return $this->modificationMapper->fetchModificationsByProduct($id);
-    }
-
-    /**
-     * @param $id
-     * @return array|\Catalog\Model\ModificationPropertyInterface[]
-     */
-    public function fetchModificationPropertyByProduct($id)
-    {
-        return $this->modificationPropertyMapper->fetchModificationPropertiesByProduct($id);
-    }
-
-    /**
-     * @param $modificationId
-     * @param $propertyId
-     * @return ModificationPropertyValueInterface
-     */
-    public function getModificationPropertyValue($modificationId, $propertyId)
-    {
-        return $this->modificationPropertyValueMapper->getModificationPropertyValue($modificationId, $propertyId);
-    }
-
-    /**
-     * @param $modificationId
-     * @return array|\Catalog\Model\ModificationPropertyValueInterface[]
-     */
-    public function fetchModificationPropertyValues($modificationId)
-    {
-        return $this->modificationPropertyValueMapper->fetchModificationPropertyValues($modificationId);
-    }
-
-
-    /**
-     * @return array
-     */
-    public function fetchAllModificationPropertyValues()
-    {
-        return $this->modificationPropertyValueMapper->fetchAllModificationPropertyValues();
-    }
-
-    /**
      * @return array
      */
     public function fetchAllProductModificationParamValues()
@@ -228,8 +123,10 @@ class ProductService implements ProductServiceInterface
         return $this->modificationTableValues($array);
     }
 
-
-
+    /**
+     * @param $array
+     * @return array
+     */
     private function modificationTableValues(&$array)
     {
         $result = [];
@@ -252,6 +149,7 @@ class ProductService implements ProductServiceInterface
 
         return $result;
     }
+
 
     /**
      * @param $array
@@ -279,6 +177,7 @@ class ProductService implements ProductServiceInterface
         return $result;
     }
 
+
     private function arrayGroupProductProperty($productProperty)
     {
         $result = [];
@@ -288,5 +187,4 @@ class ProductService implements ProductServiceInterface
 
         return $result;
     }
-
 }

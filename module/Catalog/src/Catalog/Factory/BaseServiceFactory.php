@@ -9,23 +9,25 @@
 
 namespace Catalog\Factory;
 
+
+use Catalog\Mapper\CategoryMapperInterface;
 use Catalog\Mapper\ModificationMapperInterface;
 use Catalog\Mapper\ModificationPropertyMapperInterface;
 use Catalog\Mapper\ModificationPropertyValueMapperInterface;
+use Catalog\Mapper\ProductMapperInterface;
 use Catalog\Mapper\ProductModificationParamValuesMapperInterface;
 use Catalog\Mapper\ProductParamsMapperInterface;
-use Catalog\Mapper\ProductMapperInterface;
-use Catalog\Service\ProductService;
-
+use Catalog\Service\BaseService;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class ProductServiceFactory implements FactoryInterface
+class BaseServiceFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new ProductService(
+        return new BaseService(
+            $container->get(CategoryMapperInterface::class),
             $container->get(ProductMapperInterface::class),
             $container->get(ProductParamsMapperInterface::class),
             $container->get(ModificationMapperInterface::class),
@@ -38,6 +40,7 @@ class ProductServiceFactory implements FactoryInterface
 
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return $this($serviceLocator, ProductService::class);
+        return $this($serviceLocator, BaseService::class);
     }
+
 }

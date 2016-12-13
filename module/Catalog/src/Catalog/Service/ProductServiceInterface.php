@@ -30,11 +30,24 @@ interface ProductServiceInterface
      */
     public function fetchProductsByCategory($category_id);
 
+
+    /**
+     * @param $category_id
+     * @return array
+     */
+    public function getFullArrayProductsByCategory($category_id);
+
     /**
      * @param $id int
      * @return ProductInterface
      */
     public function find($id);
+
+    /**
+     * @param $id
+     * @return array
+     */
+    public function getFullInArray($id);
 
     /**
      * @param $id

@@ -1,6 +1,7 @@
 <?php
 namespace Catalog;
 
+use Catalog\Factory\BaseServiceFactory;
 use Catalog\Factory\CategoryServiceFactory;
 use Catalog\Factory\PdfServiceFactory;
 use Catalog\Factory\ProductServiceFactory;
@@ -14,6 +15,8 @@ use Catalog\Mapper\ProductMapperInterface;
 use Catalog\Mapper\ProductModificationParamValuesMapperInterface;
 use Catalog\Mapper\ProductParamsMapperInterface;
 
+use Catalog\Service\BaseService;
+use Catalog\Service\BaseServiceInterface;
 use Catalog\Service\CategoryServiceInterface;
 use Catalog\Service\ProductServiceInterface;
 use Catalog\Service\PdfService;
@@ -55,6 +58,7 @@ class Module
                 ModificationPropertyValueMapperInterface::class => ZendDbSqlMapperFactory::class,
                 CategoryServiceInterface::class => CategoryServiceFactory::class,
                 ProductServiceInterface::class => ProductServiceFactory::class,
+                BaseServiceInterface::class => BaseServiceFactory::class,
                 PdfService::class => PdfServiceFactory::class,
                 Adapter::class => AdapterServiceFactory::class
             ],

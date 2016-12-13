@@ -10,12 +10,13 @@
 namespace Catalog\Mapper;
 
 use Catalog\Model\ProductParamsInterface;
+use Zend\Db\ResultSet\HydratingResultSet;
 
 interface ProductParamsMapperInterface
 {
     /**
      * @param $id
-     * @return array | ProductParamsInterface[]
+     * @return array | HydratingResultSet
      */
     public function fetchParamsByProduct($id);
 

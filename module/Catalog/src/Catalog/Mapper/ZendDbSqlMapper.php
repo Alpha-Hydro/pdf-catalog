@@ -22,6 +22,7 @@ use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\Db\Sql\Sql;
+use Zend\Debug\Debug;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 
 class ZendDbSqlMapper implements
@@ -253,9 +254,10 @@ class ZendDbSqlMapper implements
 
     /**
      * @param $id
-     * @return object
+     * @param bool $toArray
+     * @return mixed
      */
-    public function findProduct($id)
+    public function findProduct($id, $toArray = false)
     {
         $sql    = new Sql($this->dbAdapter);
         $select = $sql->select('products');
@@ -268,7 +270,12 @@ class ZendDbSqlMapper implements
         $result = $stmt->execute();
 
         if ($result instanceof ResultInterface && $result->isQueryResult() && $result->getAffectedRows()) {
-            return $this->hydrator->hydrate($result->current(), $this->productPrototype);
+            $object = $this->hydrator->hydrate($result->current(), $this->productPrototype);
+
+            if($toArray)
+                return $this->hydrator->extract($this->productPrototype);
+
+            return $object;
         }
 
         throw new \InvalidArgumentException("Product with given ID:{$id} not found.");
@@ -308,9 +315,12 @@ class ZendDbSqlMapper implements
         $productParams = $this->cache->getItem($keyCache, $success);
 
         if(!$success) {
+            $productParams = [];
+
             $sql = new Sql($this->dbAdapter);
             $select = $sql->select('product_params');
-            $select->order('order ASC');
+            $select
+                ->order('order ASC');
 
             $stmt   = $sql->prepareStatementForSqlObject($select);
             $result = $stmt->execute();
@@ -320,10 +330,8 @@ class ZendDbSqlMapper implements
                 $resultSet->initialize($result);
 
                 $productParams = $resultSet->toArray();
+
                 $this->cache->setItem($keyCache, $productParams);
-            }
-            else{
-                $productParams = [];
             }
         }
 
